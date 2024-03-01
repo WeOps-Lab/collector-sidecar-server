@@ -1,0 +1,6 @@
+vendor
+collector-sidecar-server
+coverage.out
+test_report.html
+.idea
+conf/config.yml

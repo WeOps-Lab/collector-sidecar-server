@@ -1,0 +1,536 @@
+basePath: /
+definitions:
+  entity.ConfigurationAssignment:
+    properties:
+      collector_id:
+        type: string
+      configuration_id:
+        type: string
+    type: object
+  entity.File:
+    properties:
+      is_dir:
+        type: boolean
+      mod_time:
+        type: string
+      path:
+        type: string
+      size:
+        type: integer
+    type: object
+  entity.MetricsRequest:
+    properties:
+      cpu_idle:
+        type: number
+      disks_75:
+        items:
+          type: string
+        type: array
+      load_1:
+        type: number
+    type: object
+  entity.NodeDetailsRequest:
+    properties:
+      collector_configuration_directory:
+        type: string
+      ip:
+        type: string
+      log_file_list:
+        items:
+          $ref: '#/definitions/entity.File'
+        type: array
+      metrics:
+        $ref: '#/definitions/entity.MetricsRequest'
+      operating_system:
+        type: string
+      status:
+        $ref: '#/definitions/entity.StatusRequest'
+      tags:
+        items:
+          type: string
+        type: array
+    type: object
+  entity.RegistrationRequest:
+    properties:
+      node_details:
+        $ref: '#/definitions/entity.NodeDetailsRequest'
+      node_name:
+        type: string
+    type: object
+  entity.ResponseBackendList:
+    properties:
+      collectors:
+        items:
+          $ref: '#/definitions/entity.ResponseCollectorBackend'
+        type: array
+    type: object
+  entity.ResponseCollectorAction:
+    properties:
+      collector_id:
+        type: string
+      properties:
+        additionalProperties: true
+        type: object
+    type: object
+  entity.ResponseCollectorBackend:
+    properties:
+      executable_path:
+        type: string
+      execute_parameters:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      node_operating_system:
+        type: string
+      service_type:
+        type: string
+      validation_parameters:
+        type: string
+    type: object
+  entity.ResponseCollectorConfiguration:
+    properties:
+      collector_id:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      template:
+        type: string
+    type: object
+  entity.ResponseCollectorRegistration:
+    properties:
+      actions:
+        items:
+          $ref: '#/definitions/entity.ResponseCollectorAction'
+        type: array
+      assignments:
+        items:
+          $ref: '#/definitions/entity.ConfigurationAssignment'
+        type: array
+      configuration:
+        $ref: '#/definitions/entity.ResponseCollectorRegistrationConfiguration'
+      configuration_override:
+        type: boolean
+    type: object
+  entity.ResponseCollectorRegistrationConfiguration:
+    properties:
+      send_status:
+        type: boolean
+      update_interval:
+        type: integer
+    type: object
+  entity.ServerVersionResponse:
+    properties:
+      cluster_id:
+        type: string
+      node_id:
+        type: string
+      version:
+        type: string
+    type: object
+  entity.SidecarBackend:
+    properties:
+      executable_path:
+        type: string
+      execute_parameters:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      operating_system:
+        type: string
+      service_type:
+        type: string
+      validation_parameters:
+        type: string
+    type: object
+  entity.SidecarTemplateConfig:
+    properties:
+      backend_id:
+        type: string
+      config_template:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  entity.StatusRequest:
+    properties:
+      collectors:
+        items:
+          $ref: '#/definitions/entity.StatusRequestBackend'
+        type: array
+      message:
+        type: string
+      status:
+        type: integer
+    type: object
+  entity.StatusRequestBackend:
+    properties:
+      collector_id:
+        type: string
+      configuration_id:
+        type: string
+      message:
+        type: string
+      status:
+        type: integer
+      verbose_message:
+        type: string
+    type: object
+  response.ApiResponse:
+    properties:
+      data:
+        description: 响应数据，一般从这里前端从这个里面取出数据展示
+      err_code:
+        description: 错误码，0表示无错误
+        type: integer
+      message:
+        description: 提示信息
+        type: string
+      request_id:
+        description: 请求的唯一ID
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  title: Swagger  API
+  version: "1.0"
+paths:
+  /api:
+    get:
+      consumes:
+      - application/json
+      description: ServerInfo
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.ServerVersionResponse'
+      summary: ServerInfo
+  /api/sidecar/collectors:
+    get:
+      consumes:
+      - application/json
+      description: ListCollectors
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.ResponseBackendList'
+      summary: ListCollectors
+  /api/sidecar/configurations/render/{node_id}/{configuration_id}:
+    get:
+      consumes:
+      - application/json
+      description: GetConfiguration
+      parameters:
+      - description: node_id
+        in: path
+        name: node_id
+        required: true
+        type: string
+      - description: configuration_id
+        in: path
+        name: configuration_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.ResponseCollectorConfiguration'
+      summary: GetConfiguration
+  /api/sidecar_agent_info:
+    get:
+      consumes:
+      - application/json
+      description: ListAgentInfo
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ApiResponse'
+      summary: ListAgentInfo
+  /api/sidecar_agent_info/{node_id}:
+    delete:
+      consumes:
+      - application/json
+      description: DeleteAgentInfo
+      parameters:
+      - description: node_id
+        in: path
+        name: node_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ApiResponse'
+      summary: DeleteAgentInfo
+    get:
+      consumes:
+      - application/json
+      description: GetAgentInfo
+      parameters:
+      - description: node_id
+        in: path
+        name: node_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ApiResponse'
+      summary: GetAgentInfo
+    put:
+      consumes:
+      - application/json
+      description: GetAgentInfo
+      parameters:
+      - description: node_id
+        in: path
+        name: node_id
+        required: true
+        type: string
+      - description: 请求体
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/entity.ResponseCollectorRegistration'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ApiResponse'
+      summary: GetAgentInfo
+  /api/sidecar_backend:
+    get:
+      consumes:
+      - application/json
+      description: ListBackends
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ApiResponse'
+      summary: ListBackends
+    post:
+      consumes:
+      - application/json
+      description: CreateBackend
+      parameters:
+      - description: 请求体
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/entity.SidecarBackend'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ApiResponse'
+      summary: CreateBackend
+  /api/sidecar_backend/{backend_id}:
+    delete:
+      consumes:
+      - application/json
+      description: DeleteBackend
+      parameters:
+      - description: backend_id
+        in: path
+        name: backend_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ApiResponse'
+      summary: DeleteBackend
+    get:
+      consumes:
+      - application/json
+      description: GetBackend
+      parameters:
+      - description: backend_id
+        in: path
+        name: backend_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ApiResponse'
+      summary: GetBackend
+    put:
+      consumes:
+      - application/json
+      description: UpdateBackend
+      parameters:
+      - description: backend_id
+        in: path
+        name: backend_id
+        required: true
+        type: string
+      - description: 请求体
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/entity.SidecarBackend'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ApiResponse'
+      summary: UpdateBackend
+  /api/sidecar_template_config:
+    get:
+      description: List all template configurations
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ApiResponse'
+      summary: List all template configurations
+  /api/sidecar_template_config/:
+    post:
+      consumes:
+      - application/json
+      description: Create a template configuration
+      parameters:
+      - description: 请求体
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/entity.SidecarTemplateConfig'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ApiResponse'
+      summary: Create a template configuration
+  /api/sidecar_template_config/{template_id}:
+    delete:
+      description: Delete a template configuration
+      parameters:
+      - description: template_id
+        in: path
+        name: template_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ApiResponse'
+      summary: Delete a template configuration
+    get:
+      description: Get a template configuration
+      parameters:
+      - description: template_id
+        in: path
+        name: template_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ApiResponse'
+      summary: Get a template configuration
+    put:
+      consumes:
+      - application/json
+      description: Update a template configuration
+      parameters:
+      - description: template_id
+        in: path
+        name: template_id
+        required: true
+        type: string
+      - description: 请求体
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/entity.SidecarTemplateConfig'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ApiResponse'
+      summary: Update a template configuration
+  /api/sidecars/{node_id}:
+    put:
+      consumes:
+      - application/json
+      description: UpdateSidecarNodeInfo
+      parameters:
+      - description: node_id
+        in: path
+        name: node_id
+        required: true
+        type: string
+      - description: 请求体
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/entity.RegistrationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.ResponseCollectorRegistration'
+      summary: UpdateSidecarNodeInfo
+swagger: "2.0"

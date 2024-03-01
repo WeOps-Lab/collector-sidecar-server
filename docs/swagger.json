@@ -1,0 +1,817 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Swagger  API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {
+        "/api": {
+            "get": {
+                "description": "ServerInfo",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "ServerInfo",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ServerVersionResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/sidecar/collectors": {
+            "get": {
+                "description": "ListCollectors",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "ListCollectors",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseBackendList"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/sidecar/configurations/render/{node_id}/{configuration_id}": {
+            "get": {
+                "description": "GetConfiguration",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "GetConfiguration",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "node_id",
+                        "name": "node_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "configuration_id",
+                        "name": "configuration_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseCollectorConfiguration"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/sidecar_agent_info": {
+            "get": {
+                "description": "ListAgentInfo",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "ListAgentInfo",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ApiResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/sidecar_agent_info/{node_id}": {
+            "get": {
+                "description": "GetAgentInfo",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "GetAgentInfo",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "node_id",
+                        "name": "node_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ApiResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "GetAgentInfo",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "GetAgentInfo",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "node_id",
+                        "name": "node_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseCollectorRegistration"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ApiResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "DeleteAgentInfo",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "DeleteAgentInfo",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "node_id",
+                        "name": "node_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ApiResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/sidecar_backend": {
+            "get": {
+                "description": "ListBackends",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "ListBackends",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ApiResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "CreateBackend",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "CreateBackend",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.SidecarBackend"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ApiResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/sidecar_backend/{backend_id}": {
+            "get": {
+                "description": "GetBackend",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "GetBackend",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "backend_id",
+                        "name": "backend_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ApiResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "UpdateBackend",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "UpdateBackend",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "backend_id",
+                        "name": "backend_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.SidecarBackend"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ApiResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "DeleteBackend",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "DeleteBackend",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "backend_id",
+                        "name": "backend_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ApiResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/sidecar_template_config": {
+            "get": {
+                "description": "List all template configurations",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "List all template configurations",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ApiResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/sidecar_template_config/": {
+            "post": {
+                "description": "Create a template configuration",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Create a template configuration",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.SidecarTemplateConfig"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ApiResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/sidecar_template_config/{template_id}": {
+            "get": {
+                "description": "Get a template configuration",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get a template configuration",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "template_id",
+                        "name": "template_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ApiResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update a template configuration",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Update a template configuration",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "template_id",
+                        "name": "template_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.SidecarTemplateConfig"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ApiResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a template configuration",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Delete a template configuration",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "template_id",
+                        "name": "template_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ApiResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/sidecars/{node_id}": {
+            "put": {
+                "description": "UpdateSidecarNodeInfo",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "UpdateSidecarNodeInfo",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "node_id",
+                        "name": "node_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.RegistrationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.ResponseCollectorRegistration"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "entity.ConfigurationAssignment": {
+            "type": "object",
+            "properties": {
+                "collector_id": {
+                    "type": "string"
+                },
+                "configuration_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.File": {
+            "type": "object",
+            "properties": {
+                "is_dir": {
+                    "type": "boolean"
+                },
+                "mod_time": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "size": {
+                    "type": "integer"
+                }
+            }
+        },
+        "entity.MetricsRequest": {
+            "type": "object",
+            "properties": {
+                "cpu_idle": {
+                    "type": "number"
+                },
+                "disks_75": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "load_1": {
+                    "type": "number"
+                }
+            }
+        },
+        "entity.NodeDetailsRequest": {
+            "type": "object",
+            "properties": {
+                "collector_configuration_directory": {
+                    "type": "string"
+                },
+                "ip": {
+                    "type": "string"
+                },
+                "log_file_list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.File"
+                    }
+                },
+                "metrics": {
+                    "$ref": "#/definitions/entity.MetricsRequest"
+                },
+                "operating_system": {
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/entity.StatusRequest"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "entity.RegistrationRequest": {
+            "type": "object",
+            "properties": {
+                "node_details": {
+                    "$ref": "#/definitions/entity.NodeDetailsRequest"
+                },
+                "node_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.ResponseBackendList": {
+            "type": "object",
+            "properties": {
+                "collectors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.ResponseCollectorBackend"
+                    }
+                }
+            }
+        },
+        "entity.ResponseCollectorAction": {
+            "type": "object",
+            "properties": {
+                "collector_id": {
+                    "type": "string"
+                },
+                "properties": {
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            }
+        },
+        "entity.ResponseCollectorBackend": {
+            "type": "object",
+            "properties": {
+                "executable_path": {
+                    "type": "string"
+                },
+                "execute_parameters": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "node_operating_system": {
+                    "type": "string"
+                },
+                "service_type": {
+                    "type": "string"
+                },
+                "validation_parameters": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.ResponseCollectorConfiguration": {
+            "type": "object",
+            "properties": {
+                "collector_id": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "template": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.ResponseCollectorRegistration": {
+            "type": "object",
+            "properties": {
+                "actions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.ResponseCollectorAction"
+                    }
+                },
+                "assignments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.ConfigurationAssignment"
+                    }
+                },
+                "configuration": {
+                    "$ref": "#/definitions/entity.ResponseCollectorRegistrationConfiguration"
+                },
+                "configuration_override": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "entity.ResponseCollectorRegistrationConfiguration": {
+            "type": "object",
+            "properties": {
+                "send_status": {
+                    "type": "boolean"
+                },
+                "update_interval": {
+                    "type": "integer"
+                }
+            }
+        },
+        "entity.ServerVersionResponse": {
+            "type": "object",
+            "properties": {
+                "cluster_id": {
+                    "type": "string"
+                },
+                "node_id": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.SidecarBackend": {
+            "type": "object",
+            "properties": {
+                "executable_path": {
+                    "type": "string"
+                },
+                "execute_parameters": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "operating_system": {
+                    "type": "string"
+                },
+                "service_type": {
+                    "type": "string"
+                },
+                "validation_parameters": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.SidecarTemplateConfig": {
+            "type": "object",
+            "properties": {
+                "backend_id": {
+                    "type": "string"
+                },
+                "config_template": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.StatusRequest": {
+            "type": "object",
+            "properties": {
+                "collectors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.StatusRequestBackend"
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "entity.StatusRequestBackend": {
+            "type": "object",
+            "properties": {
+                "collector_id": {
+                    "type": "string"
+                },
+                "configuration_id": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "verbose_message": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.ApiResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "description": "响应数据，一般从这里前端从这个里面取出数据展示"
+                },
+                "err_code": {
+                    "description": "错误码，0表示无错误",
+                    "type": "integer"
+                },
+                "message": {
+                    "description": "提示信息",
+                    "type": "string"
+                },
+                "request_id": {
+                    "description": "请求的唯一ID",
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
