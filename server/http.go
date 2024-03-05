@@ -75,14 +75,6 @@ func (s *HttpServer) Run(rs ...Router) {
 	// gin validator替换
 	validator.LazyInitGinValidator(s.config.Language)
 
-	// health check
-	go func() {
-		if err := Ping(s.config.Port, s.config.MaxPingCount); err != nil {
-			log.Fatal("server no response")
-		}
-		log.Info("server started success!", log.Pair("port", s.config.Port))
-	}()
-
 	srv := http.Server{
 		Addr:    s.config.Port,
 		Handler: g,

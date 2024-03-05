@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"collector-sidecar-server/internal/handler/ping"
 	"collector-sidecar-server/pkg/errors"
 	"collector-sidecar-server/pkg/errors/ecode"
 	"collector-sidecar-server/pkg/response"
@@ -33,6 +32,5 @@ func (m *middleware) Load(g *gin.Engine) {
 		response.JSON(c, errors.WithCode(ecode.NotFoundErr, "404 not found!"), nil)
 	})
 
-	g.GET("/ping", ping.Ping())
 	g.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }
