@@ -88,7 +88,7 @@ type ResponseCollectorBackend struct {
 
 type ResponseCollectorConfiguration struct {
 	ConfigurationId string `json:"id"`
-	BackendId       string `json:"collector_id"`
+	BackendId       uint   `json:"collector_id"`
 	Name            string `json:"name"`
 	Template        string `json:"template"`
 }

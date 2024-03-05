@@ -15,7 +15,6 @@ func (s SidecarTemplateConfigImpl) ListTemplateConfigs() entity.SidecarTemplateC
 	var responseList []entity.SidecarTemplateConfig
 	for _, model := range modelList {
 		responseList = append(responseList, entity.SidecarTemplateConfig{
-			Id:             model.Id,
 			Name:           model.Name,
 			ConfigTemplate: model.ConfigTemplate,
 		})
@@ -28,29 +27,27 @@ func (s SidecarTemplateConfigImpl) ListTemplateConfigs() entity.SidecarTemplateC
 func (s SidecarTemplateConfigImpl) GetTemplateConfig(id string) entity.SidecarTemplateConfig {
 	target, _ := s.repository.GetByNodeId(id)
 	return entity.SidecarTemplateConfig{
-		Id:             target.Id,
 		Name:           target.Name,
 		ConfigTemplate: target.ConfigTemplate,
-		BackendId:      target.SidecarBackendId,
+		BackendId:      target.SidecarBackend.ID,
 	}
 }
 
 func (s SidecarTemplateConfigImpl) CreateTemplateConfig(target entity.SidecarTemplateConfig) error {
-	result := model.SidecarTemplateConfigModel{
-		Id:               target.Id,
-		Name:             target.Name,
-		ConfigTemplate:   target.ConfigTemplate,
-		SidecarBackendId: target.BackendId,
-	}
-	return s.repository.Create(&result)
+	//result := model.SidecarTemplateConfigModel{
+	//	Name:             target.Name,
+	//	ConfigTemplate:   target.ConfigTemplate,
+	//	SidecarBackendId: target.BackendId,
+	//}
+	//return s.repository.Create(&result)
+	return nil
 }
 
 func (s SidecarTemplateConfigImpl) UpdateTemplateConfig(id string, target entity.SidecarTemplateConfig) error {
 	result := model.SidecarTemplateConfigModel{
-		Id:               target.Id,
-		Name:             target.Name,
-		ConfigTemplate:   target.ConfigTemplate,
-		SidecarBackendId: target.BackendId,
+		Name:           target.Name,
+		ConfigTemplate: target.ConfigTemplate,
+		//SidecarBackendId: target.BackendId,
 	}
 	return s.repository.Update(&result)
 }

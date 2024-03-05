@@ -13,8 +13,6 @@ var ProviderSet = wire.NewSet(
 	wire.Bind(new(SidecarRepo), new(*SidecarRepoImpl)),
 	NewSidecarAgentInfoRepo,
 	wire.Bind(new(SidecarAgentInfoRepo), new(*SidecarAgentInfoRepoImpl)),
-	NewSidecarBackendRepo,
-	wire.Bind(new(SidecarBackendRepo), new(*SidecarBackendRepoImpl)),
 	NewSidecarTemplateConfigRepo,
 	wire.Bind(new(SidecarTemplateConfigRepo), new(*SidecarTemplateConfigRepoImpl)),
 )

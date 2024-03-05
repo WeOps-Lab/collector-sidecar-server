@@ -8,5 +8,5 @@ type SidecarTemplateConfig struct {
 	Id             string `json:"id"`
 	Name           string `json:"name"`
 	ConfigTemplate string `json:"config_template"`
-	BackendId      string `json:"backend_id"`
+	BackendId      uint   `json:"backend_id"`
 }

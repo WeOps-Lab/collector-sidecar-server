@@ -44,6 +44,10 @@ func main() {
 			log.Info("开启Postgres数据库连接")
 			ds = db.NewDefaultPostgres(c.DBConfig)
 		}
+		if c.DBConfig.DbType == "sqlite" {
+			log.Info("开启Sqlite数据库连接")
+			ds = db.NewDefaultSqlite(c.DBConfig)
+		}
 		if c.DBConfig.AutoMigrate {
 			model.MigrateAllModel(ds.Master(context.Background()))
 		}

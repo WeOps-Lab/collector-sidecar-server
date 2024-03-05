@@ -2,11 +2,11 @@ package service
 
 import (
 	"bytes"
-	"context"
-	"encoding/json"
 	"collector-sidecar-server/internal/entity"
 	"collector-sidecar-server/internal/repo"
 	"collector-sidecar-server/pkg/security"
+	"context"
+	"encoding/json"
 	"text/template"
 )
 
@@ -41,7 +41,7 @@ func (s *SidecarServiceImpl) RenderConfiguration(nodeId string, configurationId 
 		ConfigurationId: configurationId,
 		Name:            target.Name,
 		Template:        renderedConfig.String(),
-		BackendId:       target.SidecarBackendId,
+		BackendId:       target.SidecarBackend.ID,
 	}
 	return result
 }
@@ -56,7 +56,6 @@ func (s *SidecarServiceImpl) ListCollectors() entity.ResponseBackendList {
 	//convert model to entity, entity.ResponseBackendList
 	for _, v := range entityList {
 		backend := entity.ResponseCollectorBackend{
-			Id:                   v.Id,
 			Name:                 v.Name,
 			ServiceType:          v.ServiceType,
 			OperatingSystem:      v.OperatingSystem,
@@ -78,8 +77,9 @@ func (s *SidecarServiceImpl) GetServerInfo() entity.ServerVersionResponse {
 }
 
 func (s *SidecarServiceImpl) GetConfigETag(nodeId string) string {
-	agentEntity := s.repository.GetAgentInfo(context.TODO(), nodeId)
-	return security.Md5(agentEntity.AgentConfig)
+	//agentEntity := s.repository.GetAgentInfo(context.TODO(), nodeId)
+	//return security.Md5(agentEntity.AgentConfig)
+	return ""
 }
 
 func (s *SidecarServiceImpl) GetConfigBackendListETag(backendConfig string) string {

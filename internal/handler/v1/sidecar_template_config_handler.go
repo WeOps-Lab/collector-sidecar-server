@@ -18,8 +18,10 @@ func NewSidecarTemplateConfigHandler(sidecarTemplateConfigService service.Sideca
 }
 
 // ListTemplateConfigs godoc
-// @Summary List all template configurations
-// @Description List all template configurations
+// @Schemes
+// @Summary ListBackend all template configurations
+// @Description ListBackend all template configurations
+// @Accept json
 // @Produce json
 // @Success 200 {object} response.ApiResponse
 // @Router /api/sidecar_template_config [get]

@@ -5,7 +5,7 @@ type SidecarAgentInfoListResponse struct {
 }
 
 type SidecarAgentInfo struct {
-	NodeId      string `json:"node_id"`
-	NodeDetails string `json:"node_details"`
-	AgentConfig string `json:"agent_config"`
+	NodeId      string                        `json:"node_id"`
+	NodeDetails string                        `json:"node_details"`
+	AgentConfig ResponseCollectorRegistration `json:"agent_config"`
 }

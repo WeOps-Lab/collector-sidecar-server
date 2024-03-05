@@ -213,14 +213,28 @@ var doc = `{
         },
         "/api/sidecar_backend": {
             "get": {
-                "description": "ListBackends",
+                "description": "ListBackend",
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
                 ],
-                "summary": "ListBackends",
+                "summary": "ListBackend",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "current",
+                        "name": "current",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "size",
+                        "name": "size",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -260,7 +274,7 @@ var doc = `{
                 }
             }
         },
-        "/api/sidecar_backend/{backend_id}": {
+        "/api/sidecar_backend/{id}": {
             "get": {
                 "description": "GetBackend",
                 "consumes": [
@@ -273,8 +287,8 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "backend_id",
-                        "name": "backend_id",
+                        "description": "id",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     }
@@ -300,8 +314,8 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "backend_id",
-                        "name": "backend_id",
+                        "description": "id",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     },
@@ -336,8 +350,8 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "backend_id",
-                        "name": "backend_id",
+                        "description": "id",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     }
@@ -354,11 +368,14 @@ var doc = `{
         },
         "/api/sidecar_template_config": {
             "get": {
-                "description": "List all template configurations",
+                "description": "ListBackend all template configurations",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
-                "summary": "List all template configurations",
+                "summary": "ListBackend all template configurations",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -667,7 +684,7 @@ var doc = `{
             "type": "object",
             "properties": {
                 "collector_id": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "id": {
                     "type": "string"
@@ -737,9 +754,6 @@ var doc = `{
                 "execute_parameters": {
                     "type": "string"
                 },
-                "id": {
-                    "type": "string"
-                },
                 "name": {
                     "type": "string"
                 },
@@ -758,7 +772,7 @@ var doc = `{
             "type": "object",
             "properties": {
                 "backend_id": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "config_template": {
                     "type": "string"

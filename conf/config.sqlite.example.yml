@@ -9,8 +9,8 @@ language: zh
 database:
   enable: true
   auto-migrate: true
-  dbtype: postgres
-  dsn: "host=127.0.0.1 port=5432 user=postgres password=postgres dbname=collector-sidecar-service sslmode=disable"
+  dbtype: sqlite
+  dsn: "collector-sidecar-server.db"
   maximum-pool-size: 50
   maximum-idle-size: 10
 

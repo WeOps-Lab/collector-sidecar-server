@@ -92,7 +92,7 @@ definitions:
   entity.ResponseCollectorConfiguration:
     properties:
       collector_id:
-        type: string
+        type: integer
       id:
         type: string
       name:
@@ -137,8 +137,6 @@ definitions:
         type: string
       execute_parameters:
         type: string
-      id:
-        type: string
       name:
         type: string
       operating_system:
@@ -151,7 +149,7 @@ definitions:
   entity.SidecarTemplateConfig:
     properties:
       backend_id:
-        type: string
+        type: integer
       config_template:
         type: string
       id:
@@ -331,7 +329,16 @@ paths:
     get:
       consumes:
       - application/json
-      description: ListBackends
+      description: ListBackend
+      parameters:
+      - description: current
+        in: query
+        name: current
+        type: integer
+      - description: size
+        in: query
+        name: size
+        type: integer
       produces:
       - application/json
       responses:
@@ -339,7 +346,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/response.ApiResponse'
-      summary: ListBackends
+      summary: ListBackend
     post:
       consumes:
       - application/json
@@ -359,15 +366,15 @@ paths:
           schema:
             $ref: '#/definitions/response.ApiResponse'
       summary: CreateBackend
-  /api/sidecar_backend/{backend_id}:
+  /api/sidecar_backend/{id}:
     delete:
       consumes:
       - application/json
       description: DeleteBackend
       parameters:
-      - description: backend_id
+      - description: id
         in: path
-        name: backend_id
+        name: id
         required: true
         type: string
       produces:
@@ -383,9 +390,9 @@ paths:
       - application/json
       description: GetBackend
       parameters:
-      - description: backend_id
+      - description: id
         in: path
-        name: backend_id
+        name: id
         required: true
         type: string
       produces:
@@ -401,9 +408,9 @@ paths:
       - application/json
       description: UpdateBackend
       parameters:
-      - description: backend_id
+      - description: id
         in: path
-        name: backend_id
+        name: id
         required: true
         type: string
       - description: 请求体
@@ -422,7 +429,9 @@ paths:
       summary: UpdateBackend
   /api/sidecar_template_config:
     get:
-      description: List all template configurations
+      consumes:
+      - application/json
+      description: ListBackend all template configurations
       produces:
       - application/json
       responses:
@@ -430,7 +439,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/response.ApiResponse'
-      summary: List all template configurations
+      summary: ListBackend all template configurations
   /api/sidecar_template_config/:
     post:
       consumes:

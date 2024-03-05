@@ -1,9 +1,15 @@
 package model
 
+import (
+	"collector-sidecar-server/internal/entity"
+	"gorm.io/gorm"
+)
+
 type SidecarAgentInfoModel struct {
-	NodeId      string `gorm:"column:node_id;type:varchar(255);not null;primary_key" json:"node_id"`
-	NodeDetails string `gorm:"column:node_details;type:text;default:'{}';" json:"node_details"`
-	AgentConfig string `gorm:"column:agent_config;type:text;default:'{}';" json:"agent_config"`
+	gorm.Model
+	NodeId      string
+	NodeDetails string
+	AgentConfig entity.ResponseCollectorRegistration `gorm:"type:json"`
 }
 
 func (receiver SidecarAgentInfoModel) TableName() string {
