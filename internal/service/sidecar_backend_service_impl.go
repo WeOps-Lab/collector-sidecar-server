@@ -9,8 +9,18 @@ import (
 type SidecarBackendServiceImpl struct {
 }
 
-func (s SidecarBackendServiceImpl) NewSidecarBackendEntityFromModel(m *model.SidecarBackendModel) entity.SidecarBackend {
-	return entity.SidecarBackend{
+func (s SidecarBackendServiceImpl) BuildModelFromEntity(target entity.SidecarBackendEntity) model.SidecarBackendModel {
+	return model.SidecarBackendModel{
+		Name:                 target.Name,
+		ServiceType:          target.ServiceType,
+		OperatingSystem:      target.OperatingSystem,
+		ExecutablePath:       target.ExecutablePath,
+		ExecuteParameters:    target.ExecuteParameters,
+		ValidationParameters: target.ValidationParameters,
+	}
+}
+func (s SidecarBackendServiceImpl) BuildEntityFromModel(m *model.SidecarBackendModel) entity.SidecarBackendEntity {
+	return entity.SidecarBackendEntity{
 		Name:                 m.Name,
 		ServiceType:          m.ServiceType,
 		OperatingSystem:      m.OperatingSystem,
@@ -18,62 +28,47 @@ func (s SidecarBackendServiceImpl) NewSidecarBackendEntityFromModel(m *model.Sid
 		ExecuteParameters:    m.ExecuteParameters,
 		ValidationParameters: m.ValidationParameters,
 	}
-
 }
 
-func (s SidecarBackendServiceImpl) ListBackend(current int, size int, queryParams map[string][]string) entity.SidecarBackendPageList {
+func (s SidecarBackendServiceImpl) ListBackend(current int, size int, queryParams map[string][]string) entity.SidecarBackendListEntity {
 	page := gplus.NewPage[model.SidecarBackendModel](current, size)
-	modelList, _ := gplus.SelectPage(page, gplus.BuildQuery[model.SidecarBackendModel](queryParams))
+	pagerList, _ := gplus.SelectPage(page, gplus.BuildQuery[model.SidecarBackendModel](queryParams))
 
-	var responseList []entity.SidecarBackendWrapper
-	for _, obj := range modelList.Records {
-		item := entity.SidecarBackendWrapper{
-			SidecarBackend: s.NewSidecarBackendEntityFromModel(obj),
-			Id:             obj.ID,
+	var responseList []entity.SidecarBackendWrapperEntity
+	for _, obj := range pagerList.Records {
+		item := entity.SidecarBackendWrapperEntity{
+			SidecarBackendEntity: s.BuildEntityFromModel(obj),
+			Id:                   obj.ID,
 		}
 		responseList = append(responseList, item)
 	}
 
-	return entity.SidecarBackendPageList{
+	return entity.SidecarBackendListEntity{
 		Items: responseList,
 		PagerEntity: entity.PagerEntity{
-			Current: modelList.Current,
-			Size:    modelList.Size,
-			Total:   modelList.Total,
+			Current: pagerList.Current,
+			Size:    pagerList.Size,
+			Total:   pagerList.Total,
 		},
 	}
 }
 
-func (s SidecarBackendServiceImpl) GetBackend(id uint) entity.SidecarBackendWrapper {
+func (s SidecarBackendServiceImpl) GetBackend(id uint) entity.SidecarBackendWrapperEntity {
 	target, _ := gplus.SelectById[model.SidecarBackendModel](id)
 
-	return entity.SidecarBackendWrapper{
-		Id:             target.ID,
-		SidecarBackend: s.NewSidecarBackendEntityFromModel(target),
+	return entity.SidecarBackendWrapperEntity{
+		Id:                   target.ID,
+		SidecarBackendEntity: s.BuildEntityFromModel(target),
 	}
 }
 
-func (s SidecarBackendServiceImpl) CreateBackend(target entity.SidecarBackend) error {
-	result := model.SidecarBackendModel{
-		Name:                 target.Name,
-		ServiceType:          target.ServiceType,
-		OperatingSystem:      target.OperatingSystem,
-		ExecutablePath:       target.ExecutablePath,
-		ExecuteParameters:    target.ExecuteParameters,
-		ValidationParameters: target.ValidationParameters,
-	}
+func (s SidecarBackendServiceImpl) CreateBackend(target entity.SidecarBackendEntity) error {
+	result := s.BuildModelFromEntity(target)
 	return gplus.Insert[model.SidecarBackendModel](&result).Error
 }
 
-func (s SidecarBackendServiceImpl) UpdateBackend(target entity.SidecarBackendWrapper) error {
-	obj := model.SidecarBackendModel{
-		Name:                 target.Name,
-		ServiceType:          target.ServiceType,
-		OperatingSystem:      target.OperatingSystem,
-		ExecutablePath:       target.ExecutablePath,
-		ExecuteParameters:    target.ExecuteParameters,
-		ValidationParameters: target.ValidationParameters,
-	}
+func (s SidecarBackendServiceImpl) UpdateBackend(target entity.SidecarBackendWrapperEntity) error {
+	obj := s.BuildModelFromEntity(target.SidecarBackendEntity)
 	obj.ID = target.Id
 	return gplus.UpdateById[model.SidecarBackendModel](&obj).Error
 }

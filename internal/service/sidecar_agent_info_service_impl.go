@@ -3,56 +3,67 @@ package service
 import (
 	"collector-sidecar-server/internal/entity"
 	"collector-sidecar-server/internal/model"
-	"collector-sidecar-server/internal/repo"
+	"github.com/acmestack/gorm-plus/gplus"
 )
 
 type SidecarAgentInfoServiceImpl struct {
-	repository repo.SidecarAgentInfoRepo
 }
 
-func (s SidecarAgentInfoServiceImpl) ListAgentInfo() entity.SidecarAgentInfoListResponse {
-	modelResult, _ := s.repository.GetAll()
-	var result []entity.SidecarAgentInfo
-	for _, model := range modelResult {
-		result = append(result, entity.SidecarAgentInfo{
-			NodeId:      model.NodeId,
-			NodeDetails: model.NodeDetails,
-			AgentConfig: model.AgentConfig,
-		})
-	}
-	return entity.SidecarAgentInfoListResponse{
-		AgentInfoList: result,
-	}
-}
-
-func (s SidecarAgentInfoServiceImpl) GetAgentInfo(id string) entity.SidecarAgentInfo {
-	model, _ := s.repository.GetByNodeId(id)
-	return entity.SidecarAgentInfo{
-		NodeId:      model.NodeId,
-		NodeDetails: model.NodeDetails,
-		AgentConfig: model.AgentConfig,
-	}
-}
-
-func (s SidecarAgentInfoServiceImpl) UpdateAgentConfig(id string, target entity.SidecarAgentInfo) error {
-	updateEntity := &model.SidecarAgentInfoModel{
-		NodeId:      id,
+func (s SidecarAgentInfoServiceImpl) BuildModelFromEntity(target entity.SidecarAgentInfoEntity) model.SidecarAgentInfoModel {
+	return model.SidecarAgentInfoModel{
+		NodeId:      target.NodeId,
 		NodeDetails: target.NodeDetails,
 		AgentConfig: target.AgentConfig,
 	}
-	s.repository.Update(updateEntity)
-	return nil
 }
-
-func (s SidecarAgentInfoServiceImpl) DeleteAgentInfo(id string) error {
-	s.repository.DeleteByNodeId(id)
-	return nil
-}
-
-func NewSidecarAgentInfoService(repository repo.SidecarAgentInfoRepo) *SidecarAgentInfoServiceImpl {
-	return &SidecarAgentInfoServiceImpl{
-		repository: repository,
+func (s SidecarAgentInfoServiceImpl) BuildEntityFromModel(m *model.SidecarAgentInfoModel) entity.SidecarAgentInfoEntity {
+	return entity.SidecarAgentInfoEntity{
+		NodeId:      m.NodeId,
+		NodeDetails: m.NodeDetails,
+		AgentConfig: m.AgentConfig,
 	}
+}
+func (s SidecarAgentInfoServiceImpl) ListAgentInfo(current int, size int, queryParams map[string][]string) entity.SidecarAgentInfoListEntity {
+	page := gplus.NewPage[model.SidecarAgentInfoModel](current, size)
+	pagerList, _ := gplus.SelectPage(page, gplus.BuildQuery[model.SidecarAgentInfoModel](queryParams))
+
+	var result []entity.SidecarAgentInfoWrapperEntity
+	for _, obj := range pagerList.Records {
+		result = append(result, entity.SidecarAgentInfoWrapperEntity{
+			SidecarAgentInfoEntity: s.BuildEntityFromModel(obj),
+			Id:                     obj.ID,
+		})
+	}
+	return entity.SidecarAgentInfoListEntity{
+		Items: result,
+		PagerEntity: entity.PagerEntity{
+			Current: pagerList.Current,
+			Size:    pagerList.Size,
+			Total:   pagerList.Total,
+		},
+	}
+}
+
+func (s SidecarAgentInfoServiceImpl) GetAgentInfo(id uint) entity.SidecarAgentInfoWrapperEntity {
+	target, _ := gplus.SelectById[model.SidecarAgentInfoModel](id)
+	return entity.SidecarAgentInfoWrapperEntity{
+		Id:                     target.ID,
+		SidecarAgentInfoEntity: s.BuildEntityFromModel(target),
+	}
+}
+
+func (s SidecarAgentInfoServiceImpl) UpdateAgentConfig(target entity.SidecarAgentInfoWrapperEntity) error {
+	obj := s.BuildModelFromEntity(target.SidecarAgentInfoEntity)
+	obj.ID = target.Id
+	return gplus.UpdateById[model.SidecarAgentInfoModel](&obj).Error
+}
+
+func (s SidecarAgentInfoServiceImpl) DeleteAgentInfo(id uint) error {
+	return gplus.DeleteById[model.SidecarAgentInfoModel](id).Error
+}
+
+func NewSidecarAgentInfoService() *SidecarAgentInfoServiceImpl {
+	return &SidecarAgentInfoServiceImpl{}
 }
 
 var _ SidecarAgentInfoService = (*SidecarAgentInfoServiceImpl)(nil)

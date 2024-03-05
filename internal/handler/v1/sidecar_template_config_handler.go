@@ -5,6 +5,7 @@ import (
 	"collector-sidecar-server/internal/service"
 	"collector-sidecar-server/pkg/response"
 	"github.com/gin-gonic/gin"
+	"github.com/gookit/goutil"
 )
 
 type SidecarTemplateConfigHandler struct {
@@ -23,11 +24,15 @@ func NewSidecarTemplateConfigHandler(sidecarTemplateConfigService service.Sideca
 // @Description ListBackend all template configurations
 // @Accept json
 // @Produce json
+// @Param current query int false "current"
+// @Param size query int false "size"
 // @Success 200 {object} response.ApiResponse
 // @Router /api/sidecar_template_config [get]
 func (h *SidecarTemplateConfigHandler) ListTemplateConfigs() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		results := h.sidecarTemplateConfigService.ListTemplateConfigs()
+		queryParams := c.Request.URL.Query()
+		current, size := entity.ExtractPageParam(c)
+		results := h.sidecarTemplateConfigService.ListTemplateConfigs(current, size, queryParams)
 		response.JSON(c, nil, results)
 	}
 }
@@ -42,7 +47,7 @@ func (h *SidecarTemplateConfigHandler) ListTemplateConfigs() gin.HandlerFunc {
 func (handler *SidecarTemplateConfigHandler) GetTemplateConfig() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		template_id := c.Param("template_id")
-		result := handler.sidecarTemplateConfigService.GetTemplateConfig(template_id)
+		result := handler.sidecarTemplateConfigService.GetTemplateConfig(goutil.Uint(template_id))
 		response.JSON(c, nil, result)
 	}
 }
@@ -52,12 +57,12 @@ func (handler *SidecarTemplateConfigHandler) GetTemplateConfig() gin.HandlerFunc
 // @Description Create a template configuration
 // @Accept json
 // @Produce json
-// @Param req body entity.SidecarTemplateConfig true "请求体"
+// @Param req body entity.SidecarTemplateConfigEntity true "请求体"
 // @Success 200 {object} response.ApiResponse
 // @Router /api/sidecar_template_config/ [post]
 func (handler *SidecarTemplateConfigHandler) CreateTemplateConfig() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		target := entity.SidecarTemplateConfig{}
+		target := entity.SidecarTemplateConfigEntity{}
 		if err := c.ShouldBindJSON(&target); err != nil {
 			response.JSON(c, err, nil)
 			return
@@ -73,18 +78,20 @@ func (handler *SidecarTemplateConfigHandler) CreateTemplateConfig() gin.HandlerF
 // @Accept json
 // @Produce json
 // @Param template_id path string true "template_id"
-// @Param req body entity.SidecarTemplateConfig true "请求体"
+// @Param req body entity.SidecarTemplateConfigEntity true "请求体"
 // @Success 200 {object} response.ApiResponse
 // @Router /api/sidecar_template_config/{template_id} [put]
 func (handler *SidecarTemplateConfigHandler) UpdateTemplateConfig() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		template_id := c.Param("template_id")
-		target := entity.SidecarTemplateConfig{}
+		target := entity.SidecarTemplateConfigWrapperEntity{
+			Id: goutil.Uint(template_id),
+		}
 		if err := c.ShouldBindJSON(&target); err != nil {
 			response.JSON(c, err, nil)
 			return
 		}
-		err := handler.sidecarTemplateConfigService.UpdateTemplateConfig(template_id, target)
+		err := handler.sidecarTemplateConfigService.UpdateTemplateConfig(target)
 		response.JSON(c, err, nil)
 	}
 }
@@ -99,7 +106,7 @@ func (handler *SidecarTemplateConfigHandler) UpdateTemplateConfig() gin.HandlerF
 func (handler *SidecarTemplateConfigHandler) DeleteTemplateConfig() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		template_id := c.Param("template_id")
-		err := handler.sidecarTemplateConfigService.DeleteTemplateConfig(template_id)
+		err := handler.sidecarTemplateConfigService.DeleteTemplateConfig(goutil.Uint(template_id))
 		response.JSON(c, err, nil)
 	}
 }

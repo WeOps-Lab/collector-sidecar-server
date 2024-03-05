@@ -37,7 +37,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.ServerVersionResponse"
+                            "$ref": "#/definitions/entity.ServerVersionEntity"
                         }
                     }
                 }
@@ -57,7 +57,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.ResponseBackendList"
+                            "$ref": "#/definitions/entity.BackendListEntity"
                         }
                     }
                 }
@@ -93,7 +93,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.ResponseCollectorConfiguration"
+                            "$ref": "#/definitions/entity.CollectorConfigurationEntity"
                         }
                     }
                 }
@@ -109,6 +109,20 @@ var doc = `{
                     "application/json"
                 ],
                 "summary": "ListAgentInfo",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "current",
+                        "name": "current",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "size",
+                        "name": "size",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -170,7 +184,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.ResponseCollectorRegistration"
+                            "$ref": "#/definitions/entity.CollectorRegistrationEntity"
                         }
                     }
                 ],
@@ -260,7 +274,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.SidecarBackend"
+                            "$ref": "#/definitions/entity.SidecarBackendEntity"
                         }
                     }
                 ],
@@ -274,7 +288,7 @@ var doc = `{
                 }
             }
         },
-        "/api/sidecar_backend/{id}": {
+        "/api/sidecar_backend/{node_id}": {
             "get": {
                 "description": "GetBackend",
                 "consumes": [
@@ -287,7 +301,7 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "id",
+                        "description": "node_id",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -314,7 +328,7 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "id",
+                        "description": "node_id",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -325,7 +339,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.SidecarBackend"
+                            "$ref": "#/definitions/entity.SidecarBackendEntity"
                         }
                     }
                 ],
@@ -350,7 +364,7 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "id",
+                        "description": "node_id",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -376,6 +390,20 @@ var doc = `{
                     "application/json"
                 ],
                 "summary": "ListBackend all template configurations",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "current",
+                        "name": "current",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "size",
+                        "name": "size",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -403,7 +431,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.SidecarTemplateConfig"
+                            "$ref": "#/definitions/entity.SidecarTemplateConfigEntity"
                         }
                     }
                 ],
@@ -465,7 +493,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.SidecarTemplateConfig"
+                            "$ref": "#/definitions/entity.SidecarTemplateConfigEntity"
                         }
                     }
                 ],
@@ -527,7 +555,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.RegistrationRequest"
+                            "$ref": "#/definitions/entity.RegistrationSidecarEntity"
                         }
                     }
                 ],
@@ -535,7 +563,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.ResponseCollectorRegistration"
+                            "$ref": "#/definitions/entity.CollectorRegistrationEntity"
                         }
                     }
                 }
@@ -543,118 +571,18 @@ var doc = `{
         }
     },
     "definitions": {
-        "entity.ConfigurationAssignment": {
-            "type": "object",
-            "properties": {
-                "collector_id": {
-                    "type": "string"
-                },
-                "configuration_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.File": {
-            "type": "object",
-            "properties": {
-                "is_dir": {
-                    "type": "boolean"
-                },
-                "mod_time": {
-                    "type": "string"
-                },
-                "path": {
-                    "type": "string"
-                },
-                "size": {
-                    "type": "integer"
-                }
-            }
-        },
-        "entity.MetricsRequest": {
-            "type": "object",
-            "properties": {
-                "cpu_idle": {
-                    "type": "number"
-                },
-                "disks_75": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "load_1": {
-                    "type": "number"
-                }
-            }
-        },
-        "entity.NodeDetailsRequest": {
-            "type": "object",
-            "properties": {
-                "collector_configuration_directory": {
-                    "type": "string"
-                },
-                "ip": {
-                    "type": "string"
-                },
-                "log_file_list": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/entity.File"
-                    }
-                },
-                "metrics": {
-                    "$ref": "#/definitions/entity.MetricsRequest"
-                },
-                "operating_system": {
-                    "type": "string"
-                },
-                "status": {
-                    "$ref": "#/definitions/entity.StatusRequest"
-                },
-                "tags": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "entity.RegistrationRequest": {
-            "type": "object",
-            "properties": {
-                "node_details": {
-                    "$ref": "#/definitions/entity.NodeDetailsRequest"
-                },
-                "node_name": {
-                    "type": "string"
-                }
-            }
-        },
-        "entity.ResponseBackendList": {
+        "entity.BackendListEntity": {
             "type": "object",
             "properties": {
                 "collectors": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/entity.ResponseCollectorBackend"
+                        "$ref": "#/definitions/entity.CollectorBackendEntity"
                     }
                 }
             }
         },
-        "entity.ResponseCollectorAction": {
-            "type": "object",
-            "properties": {
-                "collector_id": {
-                    "type": "string"
-                },
-                "properties": {
-                    "type": "object",
-                    "additionalProperties": true
-                }
-            }
-        },
-        "entity.ResponseCollectorBackend": {
+        "entity.CollectorBackendEntity": {
             "type": "object",
             "properties": {
                 "executable_path": {
@@ -680,7 +608,7 @@ var doc = `{
                 }
             }
         },
-        "entity.ResponseCollectorConfiguration": {
+        "entity.CollectorConfigurationEntity": {
             "type": "object",
             "properties": {
                 "collector_id": {
@@ -697,30 +625,130 @@ var doc = `{
                 }
             }
         },
-        "entity.ResponseCollectorRegistration": {
+        "entity.CollectorRegistrationEntity": {
             "type": "object",
             "properties": {
                 "actions": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/entity.ResponseCollectorAction"
+                        "$ref": "#/definitions/entity.ResponseCollectorActionEntity"
                     }
                 },
                 "assignments": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/entity.ConfigurationAssignment"
+                        "$ref": "#/definitions/entity.ConfigurationAssignmentEntity"
                     }
                 },
                 "configuration": {
-                    "$ref": "#/definitions/entity.ResponseCollectorRegistrationConfiguration"
+                    "$ref": "#/definitions/entity.ResponseCollectorRegistrationConfigurationEntity"
                 },
                 "configuration_override": {
                     "type": "boolean"
                 }
             }
         },
-        "entity.ResponseCollectorRegistrationConfiguration": {
+        "entity.ConfigurationAssignmentEntity": {
+            "type": "object",
+            "properties": {
+                "collector_id": {
+                    "type": "string"
+                },
+                "configuration_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.FileEntity": {
+            "type": "object",
+            "properties": {
+                "is_dir": {
+                    "type": "boolean"
+                },
+                "mod_time": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "size": {
+                    "type": "integer"
+                }
+            }
+        },
+        "entity.MetricsEntity": {
+            "type": "object",
+            "properties": {
+                "cpu_idle": {
+                    "type": "number"
+                },
+                "disks_75": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "load_1": {
+                    "type": "number"
+                }
+            }
+        },
+        "entity.NodeDetailsEntity": {
+            "type": "object",
+            "properties": {
+                "collector_configuration_directory": {
+                    "type": "string"
+                },
+                "ip": {
+                    "type": "string"
+                },
+                "log_file_list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.FileEntity"
+                    }
+                },
+                "metrics": {
+                    "$ref": "#/definitions/entity.MetricsEntity"
+                },
+                "operating_system": {
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/entity.StatusEntity"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "entity.RegistrationSidecarEntity": {
+            "type": "object",
+            "properties": {
+                "node_details": {
+                    "$ref": "#/definitions/entity.NodeDetailsEntity"
+                },
+                "node_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.ResponseCollectorActionEntity": {
+            "type": "object",
+            "properties": {
+                "collector_id": {
+                    "type": "string"
+                },
+                "properties": {
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            }
+        },
+        "entity.ResponseCollectorRegistrationConfigurationEntity": {
             "type": "object",
             "properties": {
                 "send_status": {
@@ -731,7 +759,7 @@ var doc = `{
                 }
             }
         },
-        "entity.ServerVersionResponse": {
+        "entity.ServerVersionEntity": {
             "type": "object",
             "properties": {
                 "cluster_id": {
@@ -745,7 +773,7 @@ var doc = `{
                 }
             }
         },
-        "entity.SidecarBackend": {
+        "entity.SidecarBackendEntity": {
             "type": "object",
             "properties": {
                 "executable_path": {
@@ -768,7 +796,7 @@ var doc = `{
                 }
             }
         },
-        "entity.SidecarTemplateConfig": {
+        "entity.SidecarTemplateConfigEntity": {
             "type": "object",
             "properties": {
                 "backend_id": {
@@ -777,32 +805,12 @@ var doc = `{
                 "config_template": {
                     "type": "string"
                 },
-                "id": {
-                    "type": "string"
-                },
                 "name": {
                     "type": "string"
                 }
             }
         },
-        "entity.StatusRequest": {
-            "type": "object",
-            "properties": {
-                "collectors": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/entity.StatusRequestBackend"
-                    }
-                },
-                "message": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "integer"
-                }
-            }
-        },
-        "entity.StatusRequestBackend": {
+        "entity.StatusBackendEntity": {
             "type": "object",
             "properties": {
                 "collector_id": {
@@ -819,6 +827,23 @@ var doc = `{
                 },
                 "verbose_message": {
                     "type": "string"
+                }
+            }
+        },
+        "entity.StatusEntity": {
+            "type": "object",
+            "properties": {
+                "collectors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.StatusBackendEntity"
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
                 }
             }
         },

@@ -5,8 +5,8 @@ import (
 )
 
 type SidecarAgentInfoService interface {
-	ListAgentInfo() entity.SidecarAgentInfoListResponse
-	GetAgentInfo(id string) entity.SidecarAgentInfo
-	UpdateAgentConfig(id string, target entity.SidecarAgentInfo) error
-	DeleteAgentInfo(id string) error
+	ListAgentInfo(current int, size int, queryParams map[string][]string) entity.SidecarAgentInfoListEntity
+	GetAgentInfo(id uint) entity.SidecarAgentInfoWrapperEntity
+	UpdateAgentConfig(target entity.SidecarAgentInfoWrapperEntity) error
+	DeleteAgentInfo(id uint) error
 }

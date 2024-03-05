@@ -45,10 +45,10 @@ func (ar *ApiRouter) Load(g *gin.Engine) {
 		sidecarBackend := sidecarApi.Group("sidecar_backend")
 		{
 			sidecarBackend.GET("", ar.sidecarBackendHandler.ListBackend())
-			sidecarBackend.GET("/:id", ar.sidecarBackendHandler.GetBackend())
+			sidecarBackend.GET("/:node_id", ar.sidecarBackendHandler.GetBackend())
 			sidecarBackend.POST("", ar.sidecarBackendHandler.CreateBackend())
-			sidecarBackend.PUT("/:id", ar.sidecarBackendHandler.UpdateBackend())
-			sidecarBackend.DELETE("/:id", ar.sidecarBackendHandler.DeleteBackend())
+			sidecarBackend.PUT("/:node_id", ar.sidecarBackendHandler.UpdateBackend())
+			sidecarBackend.DELETE("/:node_id", ar.sidecarBackendHandler.DeleteBackend())
 		}
 
 		sidecarTemplateConfig := sidecarApi.Group("sidecar_template_config")

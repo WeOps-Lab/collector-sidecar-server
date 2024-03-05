@@ -32,7 +32,6 @@ func NewSidecarBackendHandler(sidecarBackendService service.SidecarBackendServic
 func (h *SidecarBackendHandler) ListBackend() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		queryParams := c.Request.URL.Query()
-		// set default value
 		current, size := entity.ExtractPageParam(c)
 		results := h.sidecarBackendService.ListBackend(current, size, queryParams)
 		response.JSON(c, nil, results)
@@ -45,12 +44,12 @@ func (h *SidecarBackendHandler) ListBackend() gin.HandlerFunc {
 // Tags sidecar_backend
 // @Accept json
 // @Produce json
-// @Param id path string true "id"
+// @Param id path string true "node_id"
 // @Success 200 {object} response.ApiResponse
-// @Router /api/sidecar_backend/{id} [get]
+// @Router /api/sidecar_backend/{node_id} [get]
 func (h *SidecarBackendHandler) GetBackend() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		id := c.Param("id")
+		id := c.Param("node_id")
 		result := h.sidecarBackendService.GetBackend(goutil.Uint(id))
 		response.JSON(c, nil, result)
 	}
@@ -62,12 +61,12 @@ func (h *SidecarBackendHandler) GetBackend() gin.HandlerFunc {
 // Tags sidecar_backend
 // @Accept json
 // @Produce json
-// @Param req body entity.SidecarBackend true "请求体"
+// @Param req body entity.SidecarBackendEntity true "请求体"
 // @Success 200 {object} response.ApiResponse
 // @Router /api/sidecar_backend [post]
 func (h *SidecarBackendHandler) CreateBackend() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		target := entity.SidecarBackend{}
+		target := entity.SidecarBackendEntity{}
 		if err := c.ShouldBindJSON(&target); err != nil {
 			response.JSON(c, err, nil)
 			return
@@ -83,14 +82,14 @@ func (h *SidecarBackendHandler) CreateBackend() gin.HandlerFunc {
 // Tags sidecar_backend
 // @Accept json
 // @Produce json
-// @Param id path string true "id"
-// @Param req body entity.SidecarBackend true "请求体"
+// @Param id path string true "node_id"
+// @Param req body entity.SidecarBackendEntity true "请求体"
 // @Success 200 {object} response.ApiResponse
-// @Router /api/sidecar_backend/{id} [put]
+// @Router /api/sidecar_backend/{node_id} [put]
 func (h *SidecarBackendHandler) UpdateBackend() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		id := c.Param("id")
-		target := entity.SidecarBackendWrapper{Id: goutil.Uint(id)}
+		id := c.Param("node_id")
+		target := entity.SidecarBackendWrapperEntity{Id: goutil.Uint(id)}
 		if err := c.ShouldBindJSON(&target); err != nil {
 			response.JSON(c, err, nil)
 			return
@@ -106,12 +105,12 @@ func (h *SidecarBackendHandler) UpdateBackend() gin.HandlerFunc {
 // Tags sidecar_backend
 // @Accept json
 // @Produce json
-// @Param id path string true "id"
+// @Param id path string true "node_id"
 // @Success 200 {object} response.ApiResponse
-// @Router /api/sidecar_backend/{id} [delete]
+// @Router /api/sidecar_backend/{node_id} [delete]
 func (h *SidecarBackendHandler) DeleteBackend() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		id := c.Param("id")
+		id := c.Param("node_id")
 		err := h.sidecarBackendService.DeleteBackend(goutil.Uint(id))
 		response.JSON(c, err, nil)
 	}

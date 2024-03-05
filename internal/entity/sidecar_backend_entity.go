@@ -1,16 +1,16 @@
 package entity
 
-type SidecarBackendPageList struct {
+type SidecarBackendListEntity struct {
 	PagerEntity
-	Items []SidecarBackendWrapper `json:"items"`
+	Items []SidecarBackendWrapperEntity `json:"items"`
 }
 
-type SidecarBackendWrapper struct {
-	SidecarBackend
+type SidecarBackendWrapperEntity struct {
+	SidecarBackendEntity
 	Id uint `json:"id"`
 }
 
-type SidecarBackend struct {
+type SidecarBackendEntity struct {
 	Name                 string `json:"name"`
 	ServiceType          string `json:"service_type"`
 	OperatingSystem      string `json:"operating_system"`

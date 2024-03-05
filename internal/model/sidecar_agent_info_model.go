@@ -8,8 +8,8 @@ import (
 type SidecarAgentInfoModel struct {
 	gorm.Model
 	NodeId      string
-	NodeDetails string
-	AgentConfig entity.ResponseCollectorRegistration `gorm:"type:json"`
+	NodeDetails entity.NodeDetailsEntity
+	AgentConfig entity.CollectorRegistrationEntity `gorm:"type:json"`
 }
 
 func (receiver SidecarAgentInfoModel) TableName() string {

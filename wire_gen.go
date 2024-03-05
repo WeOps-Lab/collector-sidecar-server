@@ -29,16 +29,13 @@ import (
 
 // initRouter 初始化router
 func initRouter(ds db.IDataSource, cacheClient cache.ICache) server.Router {
-	sidecarRepoImpl := repo.NewSidecarRepo(ds)
-	sidecarServiceImpl := service.NewSidecarService(sidecarRepoImpl)
+	sidecarServiceImpl := service.NewSidecarService()
 	sidecarHandler := v1.NewSidecarHandler(sidecarServiceImpl)
-	sidecarAgentInfoRepoImpl := repo.NewSidecarAgentInfoRepo(ds)
-	sidecarAgentInfoServiceImpl := service.NewSidecarAgentInfoService(sidecarAgentInfoRepoImpl)
+	sidecarAgentInfoServiceImpl := service.NewSidecarAgentInfoService()
 	sidecarAgentInfoHandler := v1.NewSidecarAgentInfoHandler(sidecarAgentInfoServiceImpl)
 	sidecarBackendServiceImpl := service.NewSidecarBackendService()
 	sidecarBackendHandler := v1.NewSidecarBackendHandler(sidecarBackendServiceImpl)
-	sidecarTemplateConfigRepoImpl := repo.NewSidecarTemplateConfigRepo(ds)
-	sidecarTemplateConfigImpl := service.NewSidecarTemplateConfigService(sidecarTemplateConfigRepoImpl)
+	sidecarTemplateConfigImpl := service.NewSidecarTemplateConfigService()
 	sidecarTemplateConfigHandler := v1.NewSidecarTemplateConfigHandler(sidecarTemplateConfigImpl)
 	apiRouter := router.NewApiRouter(sidecarHandler, sidecarAgentInfoHandler, sidecarBackendHandler, sidecarTemplateConfigHandler)
 	return apiRouter

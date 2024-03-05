@@ -4,3 +4,4 @@ coverage.out
 test_report.html
 .idea
 conf/config.yml
+*.db

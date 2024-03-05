@@ -5,6 +5,7 @@ import (
 	"collector-sidecar-server/internal/service"
 	"collector-sidecar-server/pkg/response"
 	"github.com/gin-gonic/gin"
+	"github.com/gookit/goutil"
 )
 
 type SidecarAgentInfoHandler struct {
@@ -23,11 +24,15 @@ func NewSidecarAgentInfoHandler(sidecarAgentInfoService service.SidecarAgentInfo
 // Tags: sidecar
 // @Accept json
 // @Produce json
+// @Param current query int false "current"
+// @Param size query int false "size"
 // @Success 200 {object} response.ApiResponse
 // @Router /api/sidecar_agent_info [get]
 func (h *SidecarAgentInfoHandler) ListAgentInfo() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		result := h.sidecarAgentInfoService.ListAgentInfo()
+		queryParams := c.Request.URL.Query()
+		current, size := entity.ExtractPageParam(c)
+		result := h.sidecarAgentInfoService.ListAgentInfo(current, size, queryParams)
 		response.JSON(c, nil, result)
 	}
 }
@@ -43,8 +48,8 @@ func (h *SidecarAgentInfoHandler) ListAgentInfo() gin.HandlerFunc {
 // @Router /api/sidecar_agent_info/{node_id} [get]
 func (h *SidecarAgentInfoHandler) GetAgentInfo() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		nodeId := c.Param("node_id")
-		result := h.sidecarAgentInfoService.GetAgentInfo(nodeId)
+		id := c.Param("node_id")
+		result := h.sidecarAgentInfoService.GetAgentInfo(goutil.Uint(id))
 		response.JSON(c, nil, result)
 	}
 }
@@ -56,18 +61,18 @@ func (h *SidecarAgentInfoHandler) GetAgentInfo() gin.HandlerFunc {
 // @Accept json
 // @Produce json
 // @Param node_id path string true "node_id"
-// @Param req body entity.ResponseCollectorRegistration true "请求体"
+// @Param req body entity.CollectorRegistrationEntity true "请求体"
 // @Success 200 {object} response.ApiResponse
 // @Router /api/sidecar_agent_info/{node_id} [put]
 func (h *SidecarAgentInfoHandler) UpdateAgentConfig() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		nodeId := c.Param("node_id")
-		target := entity.SidecarAgentInfo{}
+		id := c.Param("node_id")
+		target := entity.SidecarAgentInfoWrapperEntity{Id: goutil.Uint(id)}
 		if err := c.ShouldBindJSON(&target); err != nil {
 			response.JSON(c, err, nil)
 			return
 		}
-		err := h.sidecarAgentInfoService.UpdateAgentConfig(nodeId, target)
+		err := h.sidecarAgentInfoService.UpdateAgentConfig(target)
 		response.JSON(c, err, nil)
 	}
 
@@ -84,8 +89,8 @@ func (h *SidecarAgentInfoHandler) UpdateAgentConfig() gin.HandlerFunc {
 // @Router /api/sidecar_agent_info/{node_id} [delete]
 func (h *SidecarAgentInfoHandler) DeleteAgentInfo() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		nodeId := c.Param("node_id")
-		err := h.sidecarAgentInfoService.DeleteAgentInfo(nodeId)
+		id := c.Param("node_id")
+		err := h.sidecarAgentInfoService.DeleteAgentInfo(goutil.Uint(id))
 		response.JSON(c, err, nil)
 	}
 }

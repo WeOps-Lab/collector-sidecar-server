@@ -1,78 +1,13 @@
 basePath: /
 definitions:
-  entity.ConfigurationAssignment:
-    properties:
-      collector_id:
-        type: string
-      configuration_id:
-        type: string
-    type: object
-  entity.File:
-    properties:
-      is_dir:
-        type: boolean
-      mod_time:
-        type: string
-      path:
-        type: string
-      size:
-        type: integer
-    type: object
-  entity.MetricsRequest:
-    properties:
-      cpu_idle:
-        type: number
-      disks_75:
-        items:
-          type: string
-        type: array
-      load_1:
-        type: number
-    type: object
-  entity.NodeDetailsRequest:
-    properties:
-      collector_configuration_directory:
-        type: string
-      ip:
-        type: string
-      log_file_list:
-        items:
-          $ref: '#/definitions/entity.File'
-        type: array
-      metrics:
-        $ref: '#/definitions/entity.MetricsRequest'
-      operating_system:
-        type: string
-      status:
-        $ref: '#/definitions/entity.StatusRequest'
-      tags:
-        items:
-          type: string
-        type: array
-    type: object
-  entity.RegistrationRequest:
-    properties:
-      node_details:
-        $ref: '#/definitions/entity.NodeDetailsRequest'
-      node_name:
-        type: string
-    type: object
-  entity.ResponseBackendList:
+  entity.BackendListEntity:
     properties:
       collectors:
         items:
-          $ref: '#/definitions/entity.ResponseCollectorBackend'
+          $ref: '#/definitions/entity.CollectorBackendEntity'
         type: array
     type: object
-  entity.ResponseCollectorAction:
-    properties:
-      collector_id:
-        type: string
-      properties:
-        additionalProperties: true
-        type: object
-    type: object
-  entity.ResponseCollectorBackend:
+  entity.CollectorBackendEntity:
     properties:
       executable_path:
         type: string
@@ -89,7 +24,7 @@ definitions:
       validation_parameters:
         type: string
     type: object
-  entity.ResponseCollectorConfiguration:
+  entity.CollectorConfigurationEntity:
     properties:
       collector_id:
         type: integer
@@ -100,29 +35,94 @@ definitions:
       template:
         type: string
     type: object
-  entity.ResponseCollectorRegistration:
+  entity.CollectorRegistrationEntity:
     properties:
       actions:
         items:
-          $ref: '#/definitions/entity.ResponseCollectorAction'
+          $ref: '#/definitions/entity.ResponseCollectorActionEntity'
         type: array
       assignments:
         items:
-          $ref: '#/definitions/entity.ConfigurationAssignment'
+          $ref: '#/definitions/entity.ConfigurationAssignmentEntity'
         type: array
       configuration:
-        $ref: '#/definitions/entity.ResponseCollectorRegistrationConfiguration'
+        $ref: '#/definitions/entity.ResponseCollectorRegistrationConfigurationEntity'
       configuration_override:
         type: boolean
     type: object
-  entity.ResponseCollectorRegistrationConfiguration:
+  entity.ConfigurationAssignmentEntity:
+    properties:
+      collector_id:
+        type: string
+      configuration_id:
+        type: string
+    type: object
+  entity.FileEntity:
+    properties:
+      is_dir:
+        type: boolean
+      mod_time:
+        type: string
+      path:
+        type: string
+      size:
+        type: integer
+    type: object
+  entity.MetricsEntity:
+    properties:
+      cpu_idle:
+        type: number
+      disks_75:
+        items:
+          type: string
+        type: array
+      load_1:
+        type: number
+    type: object
+  entity.NodeDetailsEntity:
+    properties:
+      collector_configuration_directory:
+        type: string
+      ip:
+        type: string
+      log_file_list:
+        items:
+          $ref: '#/definitions/entity.FileEntity'
+        type: array
+      metrics:
+        $ref: '#/definitions/entity.MetricsEntity'
+      operating_system:
+        type: string
+      status:
+        $ref: '#/definitions/entity.StatusEntity'
+      tags:
+        items:
+          type: string
+        type: array
+    type: object
+  entity.RegistrationSidecarEntity:
+    properties:
+      node_details:
+        $ref: '#/definitions/entity.NodeDetailsEntity'
+      node_name:
+        type: string
+    type: object
+  entity.ResponseCollectorActionEntity:
+    properties:
+      collector_id:
+        type: string
+      properties:
+        additionalProperties: true
+        type: object
+    type: object
+  entity.ResponseCollectorRegistrationConfigurationEntity:
     properties:
       send_status:
         type: boolean
       update_interval:
         type: integer
     type: object
-  entity.ServerVersionResponse:
+  entity.ServerVersionEntity:
     properties:
       cluster_id:
         type: string
@@ -131,7 +131,7 @@ definitions:
       version:
         type: string
     type: object
-  entity.SidecarBackend:
+  entity.SidecarBackendEntity:
     properties:
       executable_path:
         type: string
@@ -146,29 +146,16 @@ definitions:
       validation_parameters:
         type: string
     type: object
-  entity.SidecarTemplateConfig:
+  entity.SidecarTemplateConfigEntity:
     properties:
       backend_id:
         type: integer
       config_template:
         type: string
-      id:
-        type: string
       name:
         type: string
     type: object
-  entity.StatusRequest:
-    properties:
-      collectors:
-        items:
-          $ref: '#/definitions/entity.StatusRequestBackend'
-        type: array
-      message:
-        type: string
-      status:
-        type: integer
-    type: object
-  entity.StatusRequestBackend:
+  entity.StatusBackendEntity:
     properties:
       collector_id:
         type: string
@@ -180,6 +167,17 @@ definitions:
         type: integer
       verbose_message:
         type: string
+    type: object
+  entity.StatusEntity:
+    properties:
+      collectors:
+        items:
+          $ref: '#/definitions/entity.StatusBackendEntity'
+        type: array
+      message:
+        type: string
+      status:
+        type: integer
     type: object
   response.ApiResponse:
     properties:
@@ -212,7 +210,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entity.ServerVersionResponse'
+            $ref: '#/definitions/entity.ServerVersionEntity'
       summary: ServerInfo
   /api/sidecar/collectors:
     get:
@@ -225,7 +223,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entity.ResponseBackendList'
+            $ref: '#/definitions/entity.BackendListEntity'
       summary: ListCollectors
   /api/sidecar/configurations/render/{node_id}/{configuration_id}:
     get:
@@ -249,13 +247,22 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entity.ResponseCollectorConfiguration'
+            $ref: '#/definitions/entity.CollectorConfigurationEntity'
       summary: GetConfiguration
   /api/sidecar_agent_info:
     get:
       consumes:
       - application/json
       description: ListAgentInfo
+      parameters:
+      - description: current
+        in: query
+        name: current
+        type: integer
+      - description: size
+        in: query
+        name: size
+        type: integer
       produces:
       - application/json
       responses:
@@ -316,7 +323,7 @@ paths:
         name: req
         required: true
         schema:
-          $ref: '#/definitions/entity.ResponseCollectorRegistration'
+          $ref: '#/definitions/entity.CollectorRegistrationEntity'
       produces:
       - application/json
       responses:
@@ -357,7 +364,7 @@ paths:
         name: req
         required: true
         schema:
-          $ref: '#/definitions/entity.SidecarBackend'
+          $ref: '#/definitions/entity.SidecarBackendEntity'
       produces:
       - application/json
       responses:
@@ -366,13 +373,13 @@ paths:
           schema:
             $ref: '#/definitions/response.ApiResponse'
       summary: CreateBackend
-  /api/sidecar_backend/{id}:
+  /api/sidecar_backend/{node_id}:
     delete:
       consumes:
       - application/json
       description: DeleteBackend
       parameters:
-      - description: id
+      - description: node_id
         in: path
         name: id
         required: true
@@ -390,7 +397,7 @@ paths:
       - application/json
       description: GetBackend
       parameters:
-      - description: id
+      - description: node_id
         in: path
         name: id
         required: true
@@ -408,7 +415,7 @@ paths:
       - application/json
       description: UpdateBackend
       parameters:
-      - description: id
+      - description: node_id
         in: path
         name: id
         required: true
@@ -418,7 +425,7 @@ paths:
         name: req
         required: true
         schema:
-          $ref: '#/definitions/entity.SidecarBackend'
+          $ref: '#/definitions/entity.SidecarBackendEntity'
       produces:
       - application/json
       responses:
@@ -432,6 +439,15 @@ paths:
       consumes:
       - application/json
       description: ListBackend all template configurations
+      parameters:
+      - description: current
+        in: query
+        name: current
+        type: integer
+      - description: size
+        in: query
+        name: size
+        type: integer
       produces:
       - application/json
       responses:
@@ -451,7 +467,7 @@ paths:
         name: req
         required: true
         schema:
-          $ref: '#/definitions/entity.SidecarTemplateConfig'
+          $ref: '#/definitions/entity.SidecarTemplateConfigEntity'
       produces:
       - application/json
       responses:
@@ -508,7 +524,7 @@ paths:
         name: req
         required: true
         schema:
-          $ref: '#/definitions/entity.SidecarTemplateConfig'
+          $ref: '#/definitions/entity.SidecarTemplateConfigEntity'
       produces:
       - application/json
       responses:
@@ -533,13 +549,13 @@ paths:
         name: req
         required: true
         schema:
-          $ref: '#/definitions/entity.RegistrationRequest'
+          $ref: '#/definitions/entity.RegistrationSidecarEntity'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entity.ResponseCollectorRegistration'
+            $ref: '#/definitions/entity.CollectorRegistrationEntity'
       summary: UpdateSidecarNodeInfo
 swagger: "2.0"

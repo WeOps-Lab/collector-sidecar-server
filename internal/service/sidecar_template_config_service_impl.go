@@ -3,63 +3,73 @@ package service
 import (
 	"collector-sidecar-server/internal/entity"
 	"collector-sidecar-server/internal/model"
-	"collector-sidecar-server/internal/repo"
+	"github.com/acmestack/gorm-plus/gplus"
 )
 
 type SidecarTemplateConfigImpl struct {
-	repository repo.SidecarTemplateConfigRepo
 }
 
-func (s SidecarTemplateConfigImpl) ListTemplateConfigs() entity.SidecarTemplateConfigListResponse {
-	modelList, _ := s.repository.GetAll()
-	var responseList []entity.SidecarTemplateConfig
-	for _, model := range modelList {
-		responseList = append(responseList, entity.SidecarTemplateConfig{
-			Name:           model.Name,
-			ConfigTemplate: model.ConfigTemplate,
+func (s SidecarTemplateConfigImpl) BuildModelFromEntity(target entity.SidecarTemplateConfigEntity) model.SidecarTemplateConfigModel {
+	return model.SidecarTemplateConfigModel{
+		Name:             target.Name,
+		ConfigTemplate:   target.ConfigTemplate,
+		SidecarBackendID: target.BackendId,
+	}
+}
+
+func (s SidecarTemplateConfigImpl) BuildEntityFromModel(m *model.SidecarTemplateConfigModel) entity.SidecarTemplateConfigEntity {
+	return entity.SidecarTemplateConfigEntity{
+		Name:           m.Name,
+		ConfigTemplate: m.ConfigTemplate,
+		BackendId:      m.SidecarBackendID,
+	}
+}
+func (s SidecarTemplateConfigImpl) ListTemplateConfigs(current int, size int, queryParams map[string][]string) entity.SidecarTemplateConfigListEntity {
+	page := gplus.NewPage[model.SidecarTemplateConfigModel](current, size)
+	pagerList, _ := gplus.SelectPage(page, gplus.BuildQuery[model.SidecarTemplateConfigModel](queryParams))
+
+	var responseList []entity.SidecarTemplateConfigWrapperEntity
+	for _, model := range pagerList.Records {
+		responseList = append(responseList, entity.SidecarTemplateConfigWrapperEntity{
+			Id:                          model.ID,
+			SidecarTemplateConfigEntity: s.BuildEntityFromModel(model),
 		})
 	}
-	return entity.SidecarTemplateConfigListResponse{
-		TemplateConfigs: responseList,
+	return entity.SidecarTemplateConfigListEntity{
+		Items: responseList,
+		PagerEntity: entity.PagerEntity{
+			Current: pagerList.Current,
+			Size:    pagerList.Size,
+			Total:   pagerList.Total,
+		},
 	}
 }
 
-func (s SidecarTemplateConfigImpl) GetTemplateConfig(id string) entity.SidecarTemplateConfig {
-	target, _ := s.repository.GetByNodeId(id)
-	return entity.SidecarTemplateConfig{
-		Name:           target.Name,
-		ConfigTemplate: target.ConfigTemplate,
-		BackendId:      target.SidecarBackend.ID,
+func (s SidecarTemplateConfigImpl) GetTemplateConfig(id uint) entity.SidecarTemplateConfigWrapperEntity {
+	target, _ := gplus.SelectById[model.SidecarTemplateConfigModel](id)
+	return entity.SidecarTemplateConfigWrapperEntity{
+		Id:                          target.ID,
+		SidecarTemplateConfigEntity: s.BuildEntityFromModel(target),
 	}
 }
 
-func (s SidecarTemplateConfigImpl) CreateTemplateConfig(target entity.SidecarTemplateConfig) error {
-	//result := model.SidecarTemplateConfigModel{
-	//	Name:             target.Name,
-	//	ConfigTemplate:   target.ConfigTemplate,
-	//	SidecarBackendId: target.BackendId,
-	//}
-	//return s.repository.Create(&result)
-	return nil
+func (s SidecarTemplateConfigImpl) CreateTemplateConfig(target entity.SidecarTemplateConfigEntity) error {
+	result := s.BuildModelFromEntity(target)
+	return gplus.Insert[model.SidecarTemplateConfigModel](&result).Error
 }
 
-func (s SidecarTemplateConfigImpl) UpdateTemplateConfig(id string, target entity.SidecarTemplateConfig) error {
-	result := model.SidecarTemplateConfigModel{
-		Name:           target.Name,
-		ConfigTemplate: target.ConfigTemplate,
-		//SidecarBackendId: target.BackendId,
-	}
-	return s.repository.Update(&result)
+func (s SidecarTemplateConfigImpl) UpdateTemplateConfig(target entity.SidecarTemplateConfigWrapperEntity) error {
+	obj := s.BuildModelFromEntity(target.SidecarTemplateConfigEntity)
+	obj.ID = target.Id
+	return gplus.UpdateById[model.SidecarTemplateConfigModel](&obj).Error
 }
 
-func (s SidecarTemplateConfigImpl) DeleteTemplateConfig(id string) error {
-	return s.repository.DeleteByNodeId(id)
+func (s SidecarTemplateConfigImpl) DeleteTemplateConfig(id uint) error {
+	return gplus.DeleteById[model.SidecarTemplateConfigModel](id).Error
 }
 
-func NewSidecarTemplateConfigService(repository repo.SidecarTemplateConfigRepo) *SidecarTemplateConfigImpl {
-	return &SidecarTemplateConfigImpl{
-		repository: repository,
-	}
+func NewSidecarTemplateConfigService() *SidecarTemplateConfigImpl {
+	return &SidecarTemplateConfigImpl{}
 }
 
 var _ SidecarTemplateConfigService = (*SidecarTemplateConfigImpl)(nil)

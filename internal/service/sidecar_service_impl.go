@@ -3,59 +3,62 @@ package service
 import (
 	"bytes"
 	"collector-sidecar-server/internal/entity"
-	"collector-sidecar-server/internal/repo"
+	"collector-sidecar-server/internal/model"
 	"collector-sidecar-server/pkg/security"
-	"context"
-	"encoding/json"
+	"github.com/acmestack/gorm-plus/gplus"
+	"github.com/gookit/goutil"
 	"text/template"
 )
 
 type SidecarServiceImpl struct {
-	repository repo.SidecarRepo
 }
 
-func NewSidecarService(repository repo.SidecarRepo) *SidecarServiceImpl {
-	return &SidecarServiceImpl{
-		repository: repository,
+func NewSidecarService() *SidecarServiceImpl {
+	return &SidecarServiceImpl{}
+}
+
+func (s *SidecarServiceImpl) UpdateSidecarNodeInfo(nodeId string, req entity.RegistrationSidecarEntity) entity.CollectorRegistrationEntity {
+	query, u := gplus.NewQuery[model.SidecarAgentInfoModel]()
+	query.Eq(&u.NodeId, nodeId)
+	obj, _ := gplus.SelectOne(query)
+	obj.NodeDetails = req.NodeDetails
+	gplus.UpdateById[model.SidecarAgentInfoModel](obj)
+
+	return entity.CollectorRegistrationEntity{
+		Configuration:         obj.AgentConfig.Configuration,
+		ConfigurationOverride: obj.AgentConfig.ConfigurationOverride,
+		CollectorActions:      obj.AgentConfig.CollectorActions,
+		Assignments:           obj.AgentConfig.Assignments,
 	}
 }
 
-func (s *SidecarServiceImpl) UpdateSidecarNodeInfo(nodeId string, req entity.RegistrationRequest) entity.ResponseCollectorRegistration {
-	s.repository.SaveAgentInfo(context.TODO(), nodeId, &req)
-	targetEntity := s.repository.GetAgentInfo(context.TODO(), nodeId)
-	//try to umarshal the string to json ,type is entity.ResponseCollectorRegistration
-	var agentConfig entity.ResponseCollectorRegistration
-	json.Unmarshal([]byte(targetEntity.NodeDetails), &agentConfig)
-	return agentConfig
-}
-
-func (s *SidecarServiceImpl) RenderConfiguration(nodeId string, configurationId string) entity.ResponseCollectorConfiguration {
-	target := s.repository.GetSidecarTemplateConfig(context.TODO(), configurationId)
-	tmpl, _ := template.New("config").Parse(target.ConfigTemplate)
+func (s *SidecarServiceImpl) RenderConfiguration(nodeId string, configurationId uint) entity.CollectorConfigurationEntity {
+	templateObj, _ := gplus.SelectById[model.SidecarTemplateConfigModel](configurationId)
+	tmpl, _ := template.New("config").Parse(templateObj.ConfigTemplate)
 	data := map[string]string{
 		"nodeId": nodeId,
 	}
 	var renderedConfig bytes.Buffer
 	tmpl.Execute(&renderedConfig, data)
-	result := entity.ResponseCollectorConfiguration{
-		ConfigurationId: configurationId,
-		Name:            target.Name,
+	result := entity.CollectorConfigurationEntity{
+		ConfigurationId: goutil.String(configurationId),
+		Name:            templateObj.Name,
 		Template:        renderedConfig.String(),
-		BackendId:       target.SidecarBackend.ID,
+		BackendId:       templateObj.SidecarBackendID,
 	}
 	return result
 }
 
-func (s *SidecarServiceImpl) ListCollectors() entity.ResponseBackendList {
-	entityList := s.repository.ListAgentBackend(context.TODO())
+func (s *SidecarServiceImpl) ListCollectors() entity.BackendListEntity {
+	resultList, _ := gplus.SelectList[model.SidecarBackendModel](nil)
 
-	var result entity.ResponseBackendList
+	var result entity.BackendListEntity
 	// init results do not return nil
-	result.Backends = make([]entity.ResponseCollectorBackend, 0)
+	result.Backends = make([]entity.CollectorBackendEntity, 0)
 
-	//convert model to entity, entity.ResponseBackendList
-	for _, v := range entityList {
-		backend := entity.ResponseCollectorBackend{
+	//convert model to entity, entity.BackendListEntity
+	for _, v := range resultList {
+		backend := entity.CollectorBackendEntity{
 			Name:                 v.Name,
 			ServiceType:          v.ServiceType,
 			OperatingSystem:      v.OperatingSystem,
@@ -68,8 +71,8 @@ func (s *SidecarServiceImpl) ListCollectors() entity.ResponseBackendList {
 	return result
 }
 
-func (s *SidecarServiceImpl) GetServerInfo() entity.ServerVersionResponse {
-	return entity.ServerVersionResponse{
+func (s *SidecarServiceImpl) GetServerInfo() entity.ServerVersionEntity {
+	return entity.ServerVersionEntity{
 		Version:   "5.0.0",
 		NodeId:    "master",
 		ClusterId: "cluster",
@@ -77,8 +80,11 @@ func (s *SidecarServiceImpl) GetServerInfo() entity.ServerVersionResponse {
 }
 
 func (s *SidecarServiceImpl) GetConfigETag(nodeId string) string {
-	//agentEntity := s.repository.GetAgentInfo(context.TODO(), nodeId)
-	//return security.Md5(agentEntity.AgentConfig)
+	query, u := gplus.NewQuery[model.SidecarAgentInfoModel]()
+	query.Eq(&u.NodeId, nodeId)
+	obj, _ := gplus.SelectOne(query)
+
+	return security.Md5(goutil.String(obj.AgentConfig))
 	return ""
 }
 
@@ -86,7 +92,7 @@ func (s *SidecarServiceImpl) GetConfigBackendListETag(backendConfig string) stri
 	return security.Md5(backendConfig)
 }
 
-func (s *SidecarServiceImpl) GetConfigurationETag(configurationId string) string {
-	targetEntity := s.repository.GetSidecarTemplateConfig(context.TODO(), configurationId)
-	return security.Md5(targetEntity.ConfigTemplate)
+func (s *SidecarServiceImpl) GetConfigurationETag(configurationId uint) string {
+	obj, _ := gplus.SelectById[model.SidecarTemplateConfigModel](configurationId)
+	return security.Md5(goutil.String(obj.ConfigTemplate))
 }

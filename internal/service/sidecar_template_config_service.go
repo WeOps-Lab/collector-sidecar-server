@@ -3,9 +3,9 @@ package service
 import "collector-sidecar-server/internal/entity"
 
 type SidecarTemplateConfigService interface {
-	ListTemplateConfigs() entity.SidecarTemplateConfigListResponse
-	GetTemplateConfig(id string) entity.SidecarTemplateConfig
-	CreateTemplateConfig(target entity.SidecarTemplateConfig) error
-	UpdateTemplateConfig(id string, target entity.SidecarTemplateConfig) error
-	DeleteTemplateConfig(id string) error
+	ListTemplateConfigs(current int, size int, queryParams map[string][]string) entity.SidecarTemplateConfigListEntity
+	GetTemplateConfig(id uint) entity.SidecarTemplateConfigWrapperEntity
+	CreateTemplateConfig(target entity.SidecarTemplateConfigEntity) error
+	UpdateTemplateConfig(target entity.SidecarTemplateConfigWrapperEntity) error
+	DeleteTemplateConfig(id uint) error
 }
