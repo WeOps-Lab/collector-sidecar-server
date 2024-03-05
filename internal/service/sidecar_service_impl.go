@@ -7,6 +7,7 @@ import (
 	"collector-sidecar-server/pkg/security"
 	"github.com/acmestack/gorm-plus/gplus"
 	"github.com/gookit/goutil"
+	"github.com/gookit/goutil/jsonutil"
 	"text/template"
 )
 
@@ -83,9 +84,8 @@ func (s *SidecarServiceImpl) GetConfigETag(nodeId string) string {
 	query, u := gplus.NewQuery[model.SidecarAgentInfoModel]()
 	query.Eq(&u.NodeId, nodeId)
 	obj, _ := gplus.SelectOne(query)
-
-	return security.Md5(goutil.String(obj.AgentConfig))
-	return ""
+	bts, _ := jsonutil.Encode(obj.AgentConfig)
+	return security.Md5(string(bts))
 }
 
 func (s *SidecarServiceImpl) GetConfigBackendListETag(backendConfig string) string {
@@ -94,5 +94,6 @@ func (s *SidecarServiceImpl) GetConfigBackendListETag(backendConfig string) stri
 
 func (s *SidecarServiceImpl) GetConfigurationETag(configurationId uint) string {
 	obj, _ := gplus.SelectById[model.SidecarTemplateConfigModel](configurationId)
-	return security.Md5(goutil.String(obj.ConfigTemplate))
+	bts, _ := jsonutil.Encode(obj.ConfigTemplate)
+	return security.Md5(string(bts))
 }
