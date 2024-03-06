@@ -22,6 +22,7 @@ redis:
   pool-size: 100
   min-idle-conns: 10
   idle-timeout: 3000
+
 log:
   level: debug
   file-name: web-server.log
@@ -32,3 +33,10 @@ log:
   compress: true
   local-time: false
   console: true
+
+
+keycloak:
+  realm: ""
+  server-url: ""
+  client-id: ""
+  client-secret: ""

@@ -2,6 +2,8 @@ package router
 
 import (
 	v1 "collector-sidecar-server/internal/handler/v1"
+	"collector-sidecar-server/internal/middleware"
+	"collector-sidecar-server/pkg/config"
 	"github.com/gin-gonic/gin"
 )
 
@@ -10,6 +12,7 @@ type ApiRouter struct {
 	sidecarAgentInfoHandler      *v1.SidecarAgentInfoHandler
 	sidecarBackendHandler        *v1.SidecarBackendHandler
 	sidecarTemplateConfigHandler *v1.SidecarTemplateConfigHandler
+	keycloakMiddleware           *middleware.KeyCloakMiddleware
 }
 
 func NewApiRouter(
@@ -22,19 +25,21 @@ func NewApiRouter(
 		sidecarAgentInfoHandler:      sidecarAgentInfoHandler,
 		sidecarBackendHandler:        sidecarBackendHandler,
 		sidecarTemplateConfigHandler: sidecarTemplateConfigHandler,
+		keycloakMiddleware:           middleware.NewKeyCloakMiddleware(config.GlobalConfig.KeyCloakConfig),
 	}
 }
 
 func (ar *ApiRouter) Load(g *gin.Engine) {
-	//, middleware.SidecarAuthToken()
-	sidecarApi := g.Group("/api")
+	sidecarApi := g.Group("/api", middleware.SidecarAuthToken())
 	{
 		sidecarApi.GET("", ar.sidecarHandler.ServerInfo())
 		sidecarApi.PUT("/sidecars/:node_id", ar.sidecarHandler.UpdateSidecarNodeInfo())
 		sidecarApi.GET("/sidecar/collectors", ar.sidecarHandler.ListCollectors())
 		sidecarApi.GET("/sidecar/configurations/:node_id/:configuration_id", ar.sidecarHandler.GetConfiguration())
-
-		sidecarAgentInfo := sidecarApi.Group("sidecar_agent_info")
+	}
+	innerApi := g.Group("/api", ar.keycloakMiddleware.Authenticate())
+	{
+		sidecarAgentInfo := innerApi.Group("sidecar_agent_info")
 		{
 			sidecarAgentInfo.GET("", ar.sidecarAgentInfoHandler.ListAgentInfo())
 			sidecarAgentInfo.GET("/:node_id", ar.sidecarAgentInfoHandler.GetAgentInfo())
@@ -42,7 +47,7 @@ func (ar *ApiRouter) Load(g *gin.Engine) {
 			sidecarAgentInfo.DELETE("/:node_id", ar.sidecarAgentInfoHandler.DeleteAgentInfo())
 		}
 
-		sidecarBackend := sidecarApi.Group("sidecar_backend")
+		sidecarBackend := innerApi.Group("sidecar_backend")
 		{
 			sidecarBackend.GET("", ar.sidecarBackendHandler.ListBackend())
 			sidecarBackend.GET("/:node_id", ar.sidecarBackendHandler.GetBackend())
@@ -51,7 +56,7 @@ func (ar *ApiRouter) Load(g *gin.Engine) {
 			sidecarBackend.DELETE("/:node_id", ar.sidecarBackendHandler.DeleteBackend())
 		}
 
-		sidecarTemplateConfig := sidecarApi.Group("sidecar_template_config")
+		sidecarTemplateConfig := innerApi.Group("sidecar_template_config")
 		{
 			sidecarTemplateConfig.GET("", ar.sidecarTemplateConfigHandler.ListTemplateConfigs())
 			sidecarTemplateConfig.GET("/:template_id", ar.sidecarTemplateConfigHandler.GetTemplateConfig())

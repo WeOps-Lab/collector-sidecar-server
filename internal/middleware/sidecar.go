@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"collector-sidecar-server/pkg/config"
 	"collector-sidecar-server/pkg/log"
 	"encoding/base64"
 	"fmt"
@@ -10,6 +11,10 @@ import (
 
 func SidecarAuthToken() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		if config.GlobalConfig.Mode == "debug" {
+			c.Next()
+			return
+		}
 		authorizationInfo := c.Request.Header.Get("Authorization")
 		if authorizationInfo == "" {
 			c.JSON(401, gin.H{

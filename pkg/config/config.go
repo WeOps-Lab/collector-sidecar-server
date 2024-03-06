@@ -1,27 +1,27 @@
 package config
 
 import (
-	"log"
-	"strings"
-
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
+	"log"
+	"strings"
 )
 
 var GlobalConfig *Config
 
 // Config is application global config
 type Config struct {
-	Mode         string      `mapstructure:"mode"`           // gin启动模式
-	Port         string      `mapstructure:"port"`           // 启动端口
-	AppName      string      `mapstructure:"app-name"`       //应用名称
-	Url          string      `mapstructure:"url"`            // 应用地址,用于自检 eg. http://127.0.0.1
-	MaxPingCount int         `mapstructure:"max-ping-count"` // 最大自检次数，用户健康检查
-	JwtSecret    string      `mapstructure:"jwt-secret"`
-	Language     string      `mapstructure:"language"` // 项目语言
-	DBConfig     DBConfig    `mapstructure:"database"` // 数据库信息
-	RedisConfig  RedisConfig `mapstructure:"redis"`    // redis
-	LogConfig    LogConfig   `mapstructure:"log"`      // uber zap
+	Mode           string         `mapstructure:"mode"`           // gin启动模式
+	Port           string         `mapstructure:"port"`           // 启动端口
+	AppName        string         `mapstructure:"app-name"`       //应用名称
+	Url            string         `mapstructure:"url"`            // 应用地址,用于自检 eg. http://127.0.0.1
+	MaxPingCount   int            `mapstructure:"max-ping-count"` // 最大自检次数，用户健康检查
+	JwtSecret      string         `mapstructure:"jwt-secret"`
+	Language       string         `mapstructure:"language"` // 项目语言
+	DBConfig       DBConfig       `mapstructure:"database"` // 数据库信息
+	RedisConfig    RedisConfig    `mapstructure:"redis"`    // redis
+	LogConfig      LogConfig      `mapstructure:"log"`      // uber zap
+	KeyCloakConfig KeyCloakConfig `mapstructure:"keycloak"`
 }
 
 // DBConfig is used to configure mysql database
@@ -57,6 +57,13 @@ type LogConfig struct {
 	Compress   bool   `mapstructure:"compress"`
 	LocalTime  bool   `mapstructure:"local-time"`
 	Console    bool   `mapstructure:"console"`
+}
+
+type KeyCloakConfig struct {
+	Realm        string `mapstructure:"realm"`
+	ServerUrl    string `mapstructure:"server-url"`
+	ClientId     string `mapstructure:"client-id"`
+	ClientSecret string `mapstructure:"client-secret"`
 }
 
 // Load is a loader to load config file.
