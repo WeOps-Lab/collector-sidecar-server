@@ -37,7 +37,9 @@ func initRouter(ds db.IDataSource, cacheClient cache.ICache) server.Router {
 	sidecarBackendHandler := v1.NewSidecarBackendHandler(sidecarBackendServiceImpl)
 	sidecarTemplateConfigImpl := service.NewSidecarTemplateConfigService()
 	sidecarTemplateConfigHandler := v1.NewSidecarTemplateConfigHandler(sidecarTemplateConfigImpl)
-	apiRouter := router.NewApiRouter(sidecarHandler, sidecarAgentInfoHandler, sidecarBackendHandler, sidecarTemplateConfigHandler)
+	sidecarTokenServiceImpl := service.NewSidecarTokenService()
+	sidecarTokenHandler := v1.NewSidecarTokenHandler(sidecarTokenServiceImpl)
+	apiRouter := router.NewApiRouter(sidecarHandler, sidecarAgentInfoHandler, sidecarBackendHandler, sidecarTemplateConfigHandler, sidecarTokenHandler)
 	return apiRouter
 }
 

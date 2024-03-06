@@ -13,4 +13,6 @@ var ProviderSet = wire.NewSet(
 	wire.Bind(new(SidecarBackendService), new(*SidecarBackendServiceImpl)),
 	NewSidecarTemplateConfigService,
 	wire.Bind(new(SidecarTemplateConfigService), new(*SidecarTemplateConfigImpl)),
+	NewSidecarTokenService,
+	wire.Bind(new(SidecarTokenService), new(*SidecarTokenServiceImpl)),
 )

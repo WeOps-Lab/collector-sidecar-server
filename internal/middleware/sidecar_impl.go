@@ -1,10 +1,10 @@
 package middleware
 
 import (
+	"collector-sidecar-server/internal/model"
 	"collector-sidecar-server/pkg/config"
-	"collector-sidecar-server/pkg/log"
 	"encoding/base64"
-	"fmt"
+	"github.com/acmestack/gorm-plus/gplus"
 	"github.com/gin-gonic/gin"
 	"strings"
 )
@@ -41,8 +41,17 @@ func SidecarAuthToken() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-
-		log.Info(fmt.Sprintf("token: %s", pair[0]))
+		token := pair[0]
+		query, e := gplus.NewQuery[model.SidecarTokenModel]()
+		query.Eq(&e.Token, token)
+		_, resultDb := gplus.SelectOne(query)
+		if resultDb.RowsAffected == 0 {
+			c.JSON(401, gin.H{
+				"message": "Token is not valid",
+			})
+			c.Abort()
+			return
+		}
 		c.Next()
 	}
 }

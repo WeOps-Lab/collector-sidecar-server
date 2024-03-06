@@ -445,6 +445,32 @@ var doc = `{
                 }
             }
         },
+        "/api/sidecar_template_config/{id}": {
+            "get": {
+                "description": "GetEntity",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "GetEntity",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ApiResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/sidecar_template_config/{template_id}": {
             "get": {
                 "description": "Get a template configuration",
@@ -517,6 +543,133 @@ var doc = `{
                         "type": "string",
                         "description": "template_id",
                         "name": "template_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ApiResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/sidecar_token": {
+            "get": {
+                "description": "List",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "List",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "current",
+                        "name": "current",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "size",
+                        "name": "size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ApiResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/sidecar_token/": {
+            "post": {
+                "description": "Create",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Create",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.SidecarTemplateConfigEntity"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ApiResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/sidecar_token/{id}": {
+            "put": {
+                "description": "Update",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Update",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.SidecarTokenWrapperEntity"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ApiResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "DeleteEntity",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "DeleteEntity",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     }
@@ -806,6 +959,17 @@ var doc = `{
                     "type": "string"
                 },
                 "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.SidecarTokenWrapperEntity": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "token": {
                     "type": "string"
                 }
             }

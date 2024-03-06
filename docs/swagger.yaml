@@ -155,6 +155,13 @@ definitions:
       name:
         type: string
     type: object
+  entity.SidecarTokenWrapperEntity:
+    properties:
+      id:
+        type: integer
+      token:
+        type: string
+    type: object
   entity.StatusBackendEntity:
     properties:
       collector_id:
@@ -476,6 +483,23 @@ paths:
           schema:
             $ref: '#/definitions/response.ApiResponse'
       summary: Create a template configuration
+  /api/sidecar_template_config/{id}:
+    get:
+      description: GetEntity
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ApiResponse'
+      summary: GetEntity
   /api/sidecar_template_config/{template_id}:
     delete:
       description: Delete a template configuration
@@ -533,6 +557,89 @@ paths:
           schema:
             $ref: '#/definitions/response.ApiResponse'
       summary: Update a template configuration
+  /api/sidecar_token:
+    get:
+      consumes:
+      - application/json
+      description: List
+      parameters:
+      - description: current
+        in: query
+        name: current
+        type: integer
+      - description: size
+        in: query
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ApiResponse'
+      summary: List
+  /api/sidecar_token/:
+    post:
+      consumes:
+      - application/json
+      description: Create
+      parameters:
+      - description: 请求体
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/entity.SidecarTemplateConfigEntity'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ApiResponse'
+      summary: Create
+  /api/sidecar_token/{id}:
+    delete:
+      description: DeleteEntity
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ApiResponse'
+      summary: DeleteEntity
+    put:
+      consumes:
+      - application/json
+      description: Update
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: 请求体
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/entity.SidecarTokenWrapperEntity'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ApiResponse'
+      summary: Update
   /api/sidecars/{node_id}:
     put:
       consumes:

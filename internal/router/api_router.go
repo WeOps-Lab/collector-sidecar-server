@@ -12,6 +12,7 @@ type ApiRouter struct {
 	sidecarAgentInfoHandler      *v1.SidecarAgentInfoHandler
 	sidecarBackendHandler        *v1.SidecarBackendHandler
 	sidecarTemplateConfigHandler *v1.SidecarTemplateConfigHandler
+	sidecarTokenHandler          *v1.SidecarTokenHandler
 	keycloakMiddleware           *middleware.KeyCloakMiddleware
 }
 
@@ -19,12 +20,14 @@ func NewApiRouter(
 	sidecarHandler *v1.SidecarHandler,
 	sidecarAgentInfoHandler *v1.SidecarAgentInfoHandler,
 	sidecarBackendHandler *v1.SidecarBackendHandler,
-	sidecarTemplateConfigHandler *v1.SidecarTemplateConfigHandler) *ApiRouter {
+	sidecarTemplateConfigHandler *v1.SidecarTemplateConfigHandler,
+	sidecarTokenHandler *v1.SidecarTokenHandler) *ApiRouter {
 	return &ApiRouter{
 		sidecarHandler:               sidecarHandler,
 		sidecarAgentInfoHandler:      sidecarAgentInfoHandler,
 		sidecarBackendHandler:        sidecarBackendHandler,
 		sidecarTemplateConfigHandler: sidecarTemplateConfigHandler,
+		sidecarTokenHandler:          sidecarTokenHandler,
 		keycloakMiddleware:           middleware.NewKeyCloakMiddleware(config.GlobalConfig.KeyCloakConfig),
 	}
 }
@@ -63,6 +66,15 @@ func (ar *ApiRouter) Load(g *gin.Engine) {
 			sidecarTemplateConfig.POST("", ar.sidecarTemplateConfigHandler.CreateTemplateConfig())
 			sidecarTemplateConfig.PUT("/:template_id", ar.sidecarTemplateConfigHandler.UpdateTemplateConfig())
 			sidecarTemplateConfig.DELETE("/:template_id", ar.sidecarTemplateConfigHandler.DeleteTemplateConfig())
+		}
+
+		sidecarToken := innerApi.Group("sidecar_token")
+		{
+			sidecarToken.GET("", ar.sidecarTokenHandler.List())
+			sidecarToken.GET("/:id", ar.sidecarTokenHandler.GetEntity())
+			sidecarToken.POST("", ar.sidecarTokenHandler.Create())
+			sidecarToken.PUT("/:id", ar.sidecarTokenHandler.Update())
+			sidecarToken.DELETE("/:id", ar.sidecarTokenHandler.DeleteEntity())
 		}
 	}
 
