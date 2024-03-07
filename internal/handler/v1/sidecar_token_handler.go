@@ -27,7 +27,7 @@ func NewSidecarTokenHandler(sidecarTokenService service.SidecarTokenService) *Si
 // @Param current query int false "current"
 // @Param size query int false "size"
 // @Success 200 {object} response.ApiResponse
-// @Router /api/sidecar_token [get]
+// @Router /api/sidecar_token/ [get]
 func (h *SidecarTokenHandler) List() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		queryParams := c.Request.URL.Query()
@@ -57,7 +57,7 @@ func (handler *SidecarTokenHandler) GetEntity() gin.HandlerFunc {
 // @Description Create
 // @Accept json
 // @Produce json
-// @Param req body entity.SidecarTemplateConfigEntity true "请求体"
+// @Param req body entity.SidecarTokenEntity true "请求体"
 // @Success 200 {object} response.ApiResponse
 // @Router /api/sidecar_token/ [post]
 func (handler *SidecarTokenHandler) Create() gin.HandlerFunc {

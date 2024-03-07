@@ -4,30 +4,21 @@ import (
 	"collector-sidecar-server/internal/entity"
 	"collector-sidecar-server/internal/model"
 	"github.com/acmestack/gorm-plus/gplus"
+	"github.com/mitchellh/mapstructure"
 )
 
 type SidecarBackendServiceImpl struct {
 }
 
 func (s SidecarBackendServiceImpl) BuildModelFromEntity(target entity.SidecarBackendEntity) model.SidecarBackendModel {
-	return model.SidecarBackendModel{
-		Name:                 target.Name,
-		ServiceType:          target.ServiceType,
-		OperatingSystem:      target.OperatingSystem,
-		ExecutablePath:       target.ExecutablePath,
-		ExecuteParameters:    target.ExecuteParameters,
-		ValidationParameters: target.ValidationParameters,
-	}
+	var result model.SidecarBackendModel
+	mapstructure.Decode(target, &result)
+	return result
 }
 func (s SidecarBackendServiceImpl) BuildEntityFromModel(m *model.SidecarBackendModel) entity.SidecarBackendEntity {
-	return entity.SidecarBackendEntity{
-		Name:                 m.Name,
-		ServiceType:          m.ServiceType,
-		OperatingSystem:      m.OperatingSystem,
-		ExecutablePath:       m.ExecutablePath,
-		ExecuteParameters:    m.ExecuteParameters,
-		ValidationParameters: m.ValidationParameters,
-	}
+	var result entity.SidecarBackendEntity
+	mapstructure.Decode(m, &result)
+	return result
 }
 
 func (s SidecarBackendServiceImpl) ListBackend(current int, size int, queryParams map[string][]string) entity.SidecarBackendListEntity {

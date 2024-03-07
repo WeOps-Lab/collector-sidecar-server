@@ -155,6 +155,11 @@ definitions:
       name:
         type: string
     type: object
+  entity.SidecarTokenEntity:
+    properties:
+      token:
+        type: string
+    type: object
   entity.SidecarTokenWrapperEntity:
     properties:
       id:
@@ -557,7 +562,7 @@ paths:
           schema:
             $ref: '#/definitions/response.ApiResponse'
       summary: Update a template configuration
-  /api/sidecar_token:
+  /api/sidecar_token/:
     get:
       consumes:
       - application/json
@@ -579,7 +584,6 @@ paths:
           schema:
             $ref: '#/definitions/response.ApiResponse'
       summary: List
-  /api/sidecar_token/:
     post:
       consumes:
       - application/json
@@ -590,7 +594,7 @@ paths:
         name: req
         required: true
         schema:
-          $ref: '#/definitions/entity.SidecarTemplateConfigEntity'
+          $ref: '#/definitions/entity.SidecarTokenEntity'
       produces:
       - application/json
       responses:

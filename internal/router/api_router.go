@@ -70,9 +70,9 @@ func (ar *ApiRouter) Load(g *gin.Engine) {
 
 		sidecarToken := innerApi.Group("sidecar_token")
 		{
-			sidecarToken.GET("", ar.sidecarTokenHandler.List())
+			sidecarToken.GET("/", ar.sidecarTokenHandler.List())
 			sidecarToken.GET("/:id", ar.sidecarTokenHandler.GetEntity())
-			sidecarToken.POST("", ar.sidecarTokenHandler.Create())
+			sidecarToken.POST("/", ar.sidecarTokenHandler.Create())
 			sidecarToken.PUT("/:id", ar.sidecarTokenHandler.Update())
 			sidecarToken.DELETE("/:id", ar.sidecarTokenHandler.DeleteEntity())
 		}

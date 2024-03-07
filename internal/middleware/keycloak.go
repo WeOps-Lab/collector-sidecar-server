@@ -26,6 +26,10 @@ func NewKeyCloakMiddleware(config config.KeyCloakConfig) *KeyCloakMiddleware {
 
 func (receiver KeyCloakMiddleware) Authenticate() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		if config.GlobalConfig.Mode == "debug" {
+			c.Next()
+			return
+		}
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Authorization header not provided"})

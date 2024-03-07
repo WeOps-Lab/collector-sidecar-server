@@ -557,7 +557,7 @@ var doc = `{
                 }
             }
         },
-        "/api/sidecar_token": {
+        "/api/sidecar_token/": {
             "get": {
                 "description": "List",
                 "consumes": [
@@ -589,9 +589,7 @@ var doc = `{
                         }
                     }
                 }
-            }
-        },
-        "/api/sidecar_token/": {
+            },
             "post": {
                 "description": "Create",
                 "consumes": [
@@ -608,7 +606,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.SidecarTemplateConfigEntity"
+                            "$ref": "#/definitions/entity.SidecarTokenEntity"
                         }
                     }
                 ],
@@ -959,6 +957,14 @@ var doc = `{
                     "type": "string"
                 },
                 "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.SidecarTokenEntity": {
+            "type": "object",
+            "properties": {
+                "token": {
                     "type": "string"
                 }
             }

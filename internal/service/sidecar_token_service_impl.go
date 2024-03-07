@@ -4,6 +4,7 @@ import (
 	"collector-sidecar-server/internal/entity"
 	"collector-sidecar-server/internal/model"
 	"github.com/acmestack/gorm-plus/gplus"
+	"github.com/mitchellh/mapstructure"
 )
 
 type SidecarTokenServiceImpl struct{}
@@ -54,15 +55,15 @@ func (s SidecarTokenServiceImpl) Delete(id uint) error {
 }
 
 func (s SidecarTokenServiceImpl) BuildModelFromEntity(target entity.SidecarTokenEntity) model.SidecarTokenModel {
-	return model.SidecarTokenModel{
-		Token: target.Token,
-	}
+	var result model.SidecarTokenModel
+	mapstructure.Decode(target, &result)
+	return result
 }
 
-func (s SidecarTokenServiceImpl) BuildEntityFromModel(m *model.SidecarTokenModel) entity.SidecarTokenEntity {
-	return entity.SidecarTokenEntity{
-		Token: m.Token,
-	}
+func (s SidecarTokenServiceImpl) BuildEntityFromModel(target *model.SidecarTokenModel) entity.SidecarTokenEntity {
+	var result entity.SidecarTokenEntity
+	mapstructure.Decode(target, &result)
+	return result
 }
 
 func NewSidecarTokenService() *SidecarTokenServiceImpl {

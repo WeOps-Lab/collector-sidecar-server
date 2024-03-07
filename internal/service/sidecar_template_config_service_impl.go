@@ -4,25 +4,22 @@ import (
 	"collector-sidecar-server/internal/entity"
 	"collector-sidecar-server/internal/model"
 	"github.com/acmestack/gorm-plus/gplus"
+	"github.com/mitchellh/mapstructure"
 )
 
 type SidecarTemplateConfigImpl struct {
 }
 
 func (s SidecarTemplateConfigImpl) BuildModelFromEntity(target entity.SidecarTemplateConfigEntity) model.SidecarTemplateConfigModel {
-	return model.SidecarTemplateConfigModel{
-		Name:             target.Name,
-		ConfigTemplate:   target.ConfigTemplate,
-		SidecarBackendID: target.BackendId,
-	}
+	var result model.SidecarTemplateConfigModel
+	mapstructure.Decode(target, &result)
+	return result
 }
 
 func (s SidecarTemplateConfigImpl) BuildEntityFromModel(m *model.SidecarTemplateConfigModel) entity.SidecarTemplateConfigEntity {
-	return entity.SidecarTemplateConfigEntity{
-		Name:           m.Name,
-		ConfigTemplate: m.ConfigTemplate,
-		BackendId:      m.SidecarBackendID,
-	}
+	var result entity.SidecarTemplateConfigEntity
+	mapstructure.Decode(m, &result)
+	return result
 }
 func (s SidecarTemplateConfigImpl) ListTemplateConfigs(current int, size int, queryParams map[string][]string) entity.SidecarTemplateConfigListEntity {
 	page := gplus.NewPage[model.SidecarTemplateConfigModel](current, size)
